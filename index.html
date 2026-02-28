@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LifeSync AI — Quản lý cuộc sống thông minh</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--primary:#6C63FF;--primary-light:#8B85FF;--primary-dark:#5A52E0;--secondary:#00D4AA;--accent:#FF6B6B;--warning:#FFB84D;--success:#4ADE80;--bg:#F8F9FE;--bg2:#FFFFFF;--bg3:#EEF0F8;--surface:#FFFFFF;--surface2:#F0F2FF;--text:#2D2B55;--text2:#6B6B8D;--text3:#9B9BB4;--border:rgba(108,99,255,0.12);--shadow:0 4px 24px rgba(108,99,255,0.08);--shadow-lg:0 12px 40px rgba(108,99,255,0.12);--glass:rgba(255,255,255,0.7);--glass-border:rgba(255,255,255,0.3);--sidebar-w:260px;--sidebar-collapsed:72px;--topbar-h:64px;--radius:16px;--radius-sm:10px;--radius-xs:6px;--transition:0.3s cubic-bezier(0.4,0,0.2,1)}
+[data-theme="dark"]{--bg:#0F0E17;--bg2:#1A1A2E;--bg3:#16213E;--surface:rgba(26,26,46,0.8);--surface2:rgba(108,99,255,0.1);--text:#FFFFFE;--text2:#A7A7C4;--text3:#6B6B8D;--border:rgba(108,99,255,0.2);--shadow:0 4px 24px rgba(0,0,0,0.3);--shadow-lg:0 12px 40px rgba(0,0,0,0.4);--glass:rgba(26,26,46,0.7);--glass-border:rgba(108,99,255,0.15)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Be Vietnam Pro','Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;transition:background var(--transition),color var(--transition)}
+a{text-decoration:none;color:inherit}button{border:none;cursor:pointer;font-family:inherit;font-size:inherit}
+input,textarea,select{font-family:inherit;font-size:inherit;border:none;outline:none}ul{list-style:none}img{max-width:100%}
+h1,h2,h3,h4,h5{font-family:'Inter','Be Vietnam Pro',sans-serif;font-weight:700;line-height:1.3}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:10px}
+.gradient-text{background:linear-gradient(135deg,var(--primary),var(--secondary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:all var(--transition)}
+.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--primary)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:var(--radius-sm);font-weight:600;font-size:0.95rem;transition:all var(--transition)}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;box-shadow:0 4px 16px rgba(108,99,255,0.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(108,99,255,0.4)}
+.btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary)}
+.btn-outline:hover{background:var(--primary);color:#fff}
+.btn-sm{padding:8px 16px;font-size:0.85rem;border-radius:var(--radius-xs)}
+.btn-icon{width:40px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--surface2);font-size:1.2rem}
+.btn-icon:hover{background:var(--primary);color:#fff}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:0.8rem;font-weight:600;background:var(--surface2);color:var(--primary)}
+.input-field{width:100%;padding:12px 16px;background:var(--bg);color:var(--text);border:2px solid var(--border);border-radius:var(--radius-sm);transition:all var(--transition)}
+.input-field:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(108,99,255,0.1)}
+.input-field::placeholder{color:var(--text3)}
+textarea.input-field{resize:vertical;min-height:80px}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+@keyframes typing{0%{opacity:.2}20%{opacity:1}100%{opacity:.2}}
+.fade-in-up{animation:fadeInUp 0.6s ease forwards}
+#toast-container{position:fixed;top:80px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:10px}
+.toast{padding:14px 20px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-lg);color:var(--text);display:flex;align-items:center;gap:10px;animation:slideInRight 0.3s ease;font-size:0.9rem;min-width:280px;max-width:380px;backdrop-filter:blur(20px)}
+.toast.success{border-left:4px solid var(--success)}.toast.error{border-left:4px solid var(--accent)}.toast.warning{border-left:4px solid var(--warning)}.toast.info{border-left:4px solid var(--primary)}
+.toast .toast-close{margin-left:auto;cursor:pointer;opacity:0.5;font-size:1.1rem}.toast .toast-close:hover{opacity:1}
+#landing-page{display:block}#app-dashboard{display:none}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:12px 40px;display:flex;align-items:center;justify-content:space-between;transition:all var(--transition)}
+.navbar.scrolled{background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);box-shadow:var(--shadow)}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Inter';font-weight:800;font-size:1.4rem}
+.nav-logo .logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem}
+.nav-menu{display:flex;align-items:center;gap:32px}
+.nav-menu a{font-weight:500;color:var(--text2);font-size:0.95rem;transition:color var(--transition);position:relative}
+.nav-menu a:hover{color:var(--primary)}
+.nav-menu a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--primary);transition:width var(--transition);border-radius:2px}
+.nav-menu a:hover::after{width:100%}
+.nav-actions{display:flex;align-items:center;gap:12px}
+.theme-toggle{width:44px;height:44px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;transition:all var(--transition);cursor:pointer}
+.theme-toggle:hover{background:var(--primary);color:#fff;transform:rotate(180deg)}
+.hero{min-height:100vh;display:flex;align-items:center;padding:120px 40px 80px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0}
+#particles-canvas{position:absolute;inset:0;width:100%;height:100%}
+.hero-gradient{position:absolute;width:600px;height:600px;border-radius:50%;filter:blur(120px);opacity:0.15}
+.hero-gradient-1{background:var(--primary);top:-200px;right:-100px}
+.hero-gradient-2{background:var(--secondary);bottom:-200px;left:-100px}
+.hero-gradient-3{background:var(--accent);top:50%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;opacity:0.08}
+.hero-content{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:1200px;margin:0 auto;width:100%;position:relative;z-index:1}
+.hero-text{display:flex;flex-direction:column;gap:20px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:30px;background:var(--surface2);color:var(--primary);font-size:0.85rem;font-weight:600;width:fit-content;border:1px solid var(--border)}
+.hero h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:800;line-height:1.15}
+.hero h1 .gradient-text{background:linear-gradient(135deg,var(--primary),var(--secondary),var(--primary));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gradientShift 3s ease infinite}
+.hero-subtitle{font-size:1.15rem;color:var(--text2);max-width:500px}
+.hero-buttons{display:flex;gap:14px;flex-wrap:wrap}
+.hero-trust{display:flex;gap:24px;flex-wrap:wrap;margin-top:8px}
+.trust-item{display:flex;align-items:center;gap:6px;font-size:0.85rem;color:var(--text2);font-weight:500}
+.hero-visual{display:flex;justify-content:center;align-items:center;perspective:1000px}
+.hero-mockup{width:100%;max-width:480px;aspect-ratio:4/3;position:relative;transform-style:preserve-3d;transition:transform 0.5s ease}
+.mockup-card{position:absolute;border-radius:var(--radius);padding:20px;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);box-shadow:var(--shadow-lg);transition:all 0.5s ease}
+.mockup-card-1{width:280px;height:180px;top:10%;left:5%;transform:rotateY(-5deg) rotateX(5deg);z-index:3}
+.mockup-card-2{width:240px;height:150px;top:30%;right:5%;transform:rotateY(5deg) rotateX(-3deg);z-index:2;animation:float 4s ease-in-out infinite}
+.mockup-card-3{width:200px;height:120px;bottom:10%;left:15%;transform:rotateY(-3deg) rotateX(3deg);z-index:1;animation:float 5s ease-in-out 1s infinite}
+.mockup-card h4{font-size:0.9rem;margin-bottom:8px}
+.mockup-bar{height:8px;border-radius:4px;margin:6px 0}
+.mockup-bar-1{background:linear-gradient(90deg,var(--primary),var(--primary-light));width:80%}
+.mockup-bar-2{background:linear-gradient(90deg,var(--secondary),#00E4BB);width:60%}
+.mockup-bar-3{background:linear-gradient(90deg,var(--accent),#FF8E8E);width:45%}
+.mockup-bar-4{background:linear-gradient(90deg,var(--warning),#FFC94D);width:70%}
+.mockup-stat{display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--text2);margin-top:4px}
+.section{padding:100px 40px;max-width:1200px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:60px}
+.section-header h2{font-size:clamp(1.6rem,3vw,2.4rem);margin-bottom:12px}
+.section-header p{color:var(--text2);max-width:600px;margin:0 auto;font-size:1.05rem}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px 24px;text-align:center;transition:all var(--transition);position:relative;overflow:hidden}
+.feature-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(108,99,255,0.05),rgba(0,212,170,0.05));opacity:0;transition:opacity var(--transition)}
+.feature-card:hover::before{opacity:1}
+.feature-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--primary)}
+.feature-icon{font-size:3rem;margin-bottom:16px;display:block}
+.feature-card h3{font-size:1.2rem;margin-bottom:8px}
+.feature-card p{color:var(--text2);font-size:0.9rem;position:relative}
+.steps-container{display:flex;justify-content:center;gap:60px;position:relative;align-items:flex-start}
+.step{text-align:center;max-width:250px;position:relative;z-index:1}
+.step-number{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-size:1.4rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 4px 16px rgba(108,99,255,0.3)}
+.step h3{font-size:1.1rem;margin-bottom:8px}.step p{color:var(--text2);font-size:0.9rem}
+.steps-line{position:absolute;top:32px;left:20%;right:20%;height:2px;background:linear-gradient(90deg,var(--primary),var(--secondary));z-index:0}
+.testimonials-track{display:flex;gap:24px;overflow:hidden;padding:20px 0}
+.testimonial-card{min-width:350px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:all var(--transition);flex-shrink:0}
+.testimonial-card:hover{border-color:var(--primary)}
+.testimonial-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.testimonial-avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;font-weight:700}
+.testimonial-info h4{font-size:0.95rem}.testimonial-info span{font-size:0.8rem;color:var(--text3)}
+.testimonial-stars{color:#FFB84D;font-size:0.9rem;margin-bottom:12px}
+.testimonial-text{color:var(--text2);font-size:0.95rem;font-style:italic}
+.stats-section{background:linear-gradient(135deg,var(--primary),var(--primary-dark));padding:60px 40px;border-radius:var(--radius);margin:0 40px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:40px;max-width:1000px;margin:0 auto}
+.stat-item{text-align:center;color:#fff}
+.stat-number{font-size:2.5rem;font-weight:800;font-family:'Inter';display:block}
+.stat-label{font-size:0.95rem;opacity:0.85;margin-top:4px}
+.faq-list{max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;transition:all var(--transition)}
+.faq-item.active{border-color:var(--primary)}
+.faq-question{padding:18px 24px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:600;font-size:0.95rem;transition:all var(--transition)}
+.faq-question:hover{color:var(--primary)}
+.faq-arrow{transition:transform var(--transition);color:var(--text3)}
+.faq-item.active .faq-arrow{transform:rotate(180deg);color:var(--primary)}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.4s ease}
+.faq-item.active .faq-answer{max-height:300px;padding:0 24px 18px}
+.faq-answer p{color:var(--text2);font-size:0.9rem;line-height:1.7}
+.cta-section{background:linear-gradient(135deg,var(--primary),#8B5CF6,var(--secondary));background-size:200% auto;animation:gradientShift 4s ease infinite;padding:80px 40px;text-align:center;color:#fff;border-radius:var(--radius);margin:60px 40px}
+.cta-section h2{font-size:2rem;margin-bottom:12px}
+.cta-section p{opacity:0.9;margin-bottom:24px;font-size:1.05rem}
+.cta-form{display:flex;gap:12px;max-width:440px;margin:0 auto}
+.cta-form input{flex:1;padding:14px 20px;border-radius:var(--radius-sm);border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.15);color:#fff;font-size:0.95rem}
+.cta-form input::placeholder{color:rgba(255,255,255,0.7)}
+.cta-form .btn{background:#fff;color:var(--primary);font-weight:700;white-space:nowrap}
+.footer{padding:60px 40px 30px;border-top:1px solid var(--border);max-width:1200px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-brand p{color:var(--text2);font-size:0.9rem;margin-top:12px;max-width:300px}
+.footer-col h4{font-size:0.95rem;margin-bottom:16px}
+.footer-col a{display:flex;align-items:center;gap:8px;color:var(--text2);font-size:0.9rem;padding:4px 0;transition:color var(--transition)}
+.footer-col a:hover{color:var(--primary)}
+.footer-bottom{text-align:center;padding-top:24px;border-top:1px solid var(--border);color:var(--text3);font-size:0.85rem}
+.social-links{display:flex;gap:12px;margin-top:16px}
+.social-link{width:36px;height:36px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all var(--transition);color:var(--text2)}
+.social-link:hover{color:#fff;transform:translateY(-2px)}
+.social-link.fb:hover{background:#1877F2}.social-link.yt:hover{background:#FF0000}
+.social-link.gh:hover{background:#333}.social-link.dc:hover{background:#5865F2}
+.social-link.em:hover{background:var(--accent)}
+.modal-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.active{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px;max-width:420px;width:100%;animation:scaleIn 0.3s ease;max-height:90vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--transition)}
+.modal-close:hover{background:var(--accent);color:#fff}
+.modal h2{font-size:1.5rem;margin-bottom:8px}
+.modal>p{color:var(--text2);margin-bottom:24px;font-size:0.9rem}
+.auth-tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--bg);border-radius:var(--radius-xs);padding:4px}
+.auth-tab{flex:1;padding:10px;text-align:center;border-radius:var(--radius-xs);font-weight:600;font-size:0.9rem;color:var(--text2);transition:all var(--transition);cursor:pointer}
+.auth-tab.active{background:var(--primary);color:#fff}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:0.85rem;font-weight:600;margin-bottom:6px;color:var(--text2)}
+.form-group .input-field{background:var(--bg)}
+.form-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-size:0.85rem}
+.form-row label{display:flex;align-items:center;gap:6px;cursor:pointer}.form-row a{color:var(--primary);font-weight:500}
+.auth-divider{text-align:center;margin:16px 0;color:var(--text3);font-size:0.85rem;position:relative}
+.auth-divider::before,.auth-divider::after{content:'';position:absolute;top:50%;width:calc(50% - 20px);height:1px;background:var(--border)}
+.auth-divider::before{left:0}.auth-divider::after{right:0}
+.btn-google{width:100%;padding:12px;border-radius:var(--radius-sm);background:var(--bg);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;color:var(--text);transition:all var(--transition)}
+.btn-google:hover{border-color:var(--primary);background:var(--surface2)}
+.dashboard{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);height:100vh;position:fixed;left:0;top:0;z-index:100;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:all var(--transition);overflow:hidden}
+.sidebar.collapsed{width:var(--sidebar-collapsed)}
+.sidebar-header{padding:20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);min-height:65px}
+.sidebar-logo{font-family:'Inter';font-weight:800;font-size:1.1rem;white-space:nowrap;overflow:hidden;transition:opacity var(--transition)}
+.sidebar.collapsed .sidebar-logo{opacity:0;width:0}
+.sidebar-profile{padding:20px;text-align:center;border-bottom:1px solid var(--border)}
+.sidebar.collapsed .sidebar-profile{padding:12px}
+.profile-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 8px;border:3px solid var(--primary);box-shadow:0 0 0 4px rgba(108,99,255,0.15);overflow:hidden}
+.profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.sidebar.collapsed .profile-avatar{width:40px;height:40px;font-size:1.2rem;margin-bottom:0}
+.profile-name{font-weight:700;font-size:0.95rem;white-space:nowrap;overflow:hidden}
+.profile-level{font-size:0.8rem;color:var(--text3);margin-bottom:8px;white-space:nowrap;overflow:hidden}
+.xp-bar{height:6px;background:var(--bg);border-radius:3px;margin-top:8px;overflow:hidden}
+.xp-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--primary),var(--secondary));transition:width 1s ease}
+.sidebar.collapsed .profile-name,.sidebar.collapsed .profile-level,.sidebar.collapsed .xp-bar{display:none}
+.sidebar-menu{flex:1;padding:12px 10px;overflow-y:auto}
+.menu-item{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:var(--radius-sm);margin-bottom:4px;cursor:pointer;transition:all var(--transition);font-weight:500;font-size:0.9rem;color:var(--text2);white-space:nowrap;position:relative}
+.menu-item:hover{background:var(--surface2);color:var(--text)}
+.menu-item.active{background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(108,99,255,0.05));color:var(--primary);font-weight:600}
+.menu-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:4px;height:60%;background:var(--primary);border-radius:0 4px 4px 0}
+.menu-item-icon{font-size:1.1rem;min-width:24px;text-align:center}
+.menu-item-text{overflow:hidden;transition:opacity var(--transition)}
+.sidebar.collapsed .menu-item-text{opacity:0;width:0}
+.sidebar.collapsed .menu-item{justify-content:center;padding:12px}
+.sidebar-toggle{padding:16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end}
+.sidebar-toggle button{width:32px;height:32px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;transition:all var(--transition);color:var(--text2)}
+.sidebar-toggle button:hover{background:var(--primary);color:#fff}
+.main-wrapper{flex:1;margin-left:var(--sidebar-w);min-height:100vh;transition:margin-left var(--transition)}
+.sidebar.collapsed~.main-wrapper{margin-left:var(--sidebar-collapsed)}
+.topbar{height:var(--topbar-h);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.hamburger{display:none;font-size:1.4rem;cursor:pointer;padding:4px}
+.topbar-greeting{font-weight:600;font-size:1.05rem}
+.topbar-search{position:relative;flex:1;max-width:320px;margin:0 20px}
+.topbar-search input{width:100%;padding:10px 16px 10px 40px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.9rem;transition:all var(--transition)}
+.topbar-search input:focus{border-color:var(--primary)}
+.topbar-search .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.notif-btn{position:relative}
+.notif-badge{position:absolute;top:-2px;right:-2px;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:0.65rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.user-menu{display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 12px 6px 6px;border-radius:var(--radius-sm);transition:background var(--transition)}
+.user-menu:hover{background:var(--surface2)}
+.user-menu-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:0.9rem;color:#fff;overflow:hidden}
+.user-menu-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.user-menu-name{font-weight:600;font-size:0.85rem}
+.content-area{padding:28px;min-height:calc(100vh - var(--topbar-h))}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.page-header h1{font-size:1.6rem}
+.stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;align-items:center;gap:16px;transition:all var(--transition)}
+.stat-card:hover{border-color:var(--primary);box-shadow:var(--shadow)}
+.stat-card-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.stat-card-info{flex:1}
+.stat-card-label{font-size:0.8rem;color:var(--text3);margin-bottom:2px}
+.stat-card-value{font-size:1.3rem;font-weight:700;font-family:'Inter'}
+.stat-card-trend{font-size:0.75rem;font-weight:600}
+.stat-card-trend.up{color:var(--success)}.stat-card-trend.down{color:var(--accent)}.stat-card-trend.same{color:var(--text3)}
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.chart-card h3{font-size:1rem;margin-bottom:16px}
+.chart-container{position:relative;height:250px}
+.quick-actions{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap}
+.ai-insight{background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,212,170,0.08));border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:24px;display:flex;gap:14px;align-items:flex-start}
+.ai-insight-icon{font-size:1.6rem;min-width:32px}
+.ai-insight-text{font-size:0.9rem;color:var(--text2);line-height:1.7}
+.ai-insight-text strong{color:var(--text)}
+.data-list{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.data-list-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.data-list-header h3{font-size:1rem}
+.data-list-item{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;transition:background var(--transition);font-size:0.9rem}
+.data-list-item:last-child{border-bottom:none}
+.data-list-item:hover{background:var(--surface2)}
+.data-list-item .item-info{flex:1}
+.data-list-item .item-amount{font-weight:700;font-family:'Inter'}
+.data-list-item .item-amount.income{color:var(--success)}.data-list-item .item-amount.expense{color:var(--accent)}
+.data-list-item .item-date{font-size:0.8rem;color:var(--text3)}
+.data-list-item .item-delete{opacity:0;transition:opacity var(--transition);cursor:pointer;color:var(--accent)}
+.data-list-item:hover .item-delete{opacity:1}
+.finance-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center}
+.summary-card .amount{font-size:1.6rem;font-weight:800;font-family:'Inter'}
+.summary-card .label{font-size:0.85rem;color:var(--text3);margin-top:4px}
+.summary-card.income .amount{color:var(--success)}.summary-card.expense .amount{color:var(--accent)}.summary-card.balance .amount{color:var(--primary)}
+.mood-selector{display:flex;gap:16px;justify-content:center;margin:24px 0;flex-wrap:wrap}
+.mood-btn{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.2rem;cursor:pointer;background:var(--bg);border:3px solid var(--border);transition:all var(--transition)}
+.mood-btn:hover{transform:scale(1.15);border-color:var(--primary)}
+.mood-btn.selected{border-color:var(--primary);box-shadow:0 0 0 4px rgba(108,99,255,0.2);transform:scale(1.15)}
+/* Calendar styles matching the image */
+.mood-calendar-wrapper{margin:20px 0}
+.mood-cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:8px 12px;background:var(--primary);color:#fff;border-radius:var(--radius-sm)}
+.mood-cal-header button{background:none;color:#fff;font-size:1.1rem;padding:4px 10px;border-radius:4px;transition:background 0.2s}
+.mood-cal-header button:hover{background:rgba(255,255,255,0.2)}
+.mood-cal-header span{font-weight:700;font-size:1rem}
+.mood-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.mood-cal-dayname{text-align:center;font-size:0.75rem;font-weight:700;color:var(--text3);padding:8px 0}
+.mood-cal-dayname:nth-child(7){color:var(--accent)}
+.mood-cal-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;font-size:0.8rem;cursor:pointer;transition:all var(--transition);border:1px solid transparent;position:relative;gap:2px}
+.mood-cal-cell:hover{background:var(--surface2);border-color:var(--border)}
+.mood-cal-cell.today{border:2px solid var(--primary);font-weight:700}
+.mood-cal-cell.has-mood{background:var(--surface2)}
+.mood-cal-cell .cal-date{font-size:0.75rem;color:var(--text2);font-weight:600}
+.mood-cal-cell .cal-lunar{font-size:0.55rem;color:var(--text3)}
+.mood-cal-cell .cal-emoji{font-size:1.1rem}
+.mood-cal-cell.sunday .cal-date{color:var(--accent)}
+.mood-cal-cell.empty{pointer-events:none}
+.tag-list{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.tag{padding:6px 14px;border-radius:20px;font-size:0.8rem;background:var(--bg);border:1px solid var(--border);cursor:pointer;transition:all var(--transition);font-weight:500}
+.tag:hover,.tag.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.breathing-container{text-align:center;padding:40px 0}
+.breathing-circle{width:200px;height:200px;border-radius:50%;margin:20px auto;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;font-weight:700;transition:transform 4s ease-in-out;box-shadow:0 0 40px rgba(108,99,255,0.3)}
+.breathing-circle.inhale{transform:scale(1.4)}.breathing-circle.exhale{transform:scale(1);transition-duration:8s}.breathing-circle.hold{transform:scale(1.4)}
+.chat-bubble{max-width:75%;padding:14px 18px;border-radius:18px;font-size:0.9rem;line-height:1.6;animation:fadeInUp 0.3s ease}
+.chat-bubble.ai{align-self:flex-start;background:var(--surface2);color:var(--text);border-bottom-left-radius:4px}
+.chat-bubble.user{align-self:flex-end;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border-bottom-right-radius:4px}
+.chat-bubble .bubble-name{font-size:0.75rem;font-weight:600;margin-bottom:4px;opacity:0.7}
+.typing-indicator{display:flex;gap:4px;padding:14px 18px;align-self:flex-start}
+.typing-indicator span{width:8px;height:8px;border-radius:50%;background:var(--text3);animation:typing 1.4s infinite}
+.typing-indicator span:nth-child(2){animation-delay:0.2s}.typing-indicator span:nth-child(3){animation-delay:0.4s}
+.chat-input-area{display:flex;gap:10px;padding:16px 20px;border-top:1px solid var(--border);background:var(--surface)}
+.chat-input-area input{flex:1;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text)}
+.chat-input-area input:focus{border-color:var(--primary)}
+.quick-prompts{display:flex;gap:8px;padding:8px 0;overflow-x:auto;flex-wrap:wrap}
+.quick-prompt{padding:6px 14px;border-radius:20px;font-size:0.8rem;background:var(--surface2);border:1px solid var(--border);cursor:pointer;white-space:nowrap;transition:all var(--transition)}
+.quick-prompt:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+.pomodoro-container{text-align:center;padding:20px 0}
+.pomodoro-circle{width:220px;height:220px;margin:20px auto;position:relative}
+.pomodoro-circle svg{width:100%;height:100%;transform:rotate(-90deg)}
+.pomodoro-circle .progress-ring{fill:none;stroke:var(--primary);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+.pomodoro-circle .bg-ring{fill:none;stroke:var(--border);stroke-width:6}
+.pomodoro-time{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pomodoro-time .time{font-size:2.8rem;font-weight:800;font-family:'Inter'}
+.pomodoro-time .label{font-size:0.85rem;color:var(--text2)}
+.task-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);margin-bottom:8px;transition:all var(--transition)}
+.task-item:hover{border-color:var(--primary)}
+.task-item.completed .task-text{text-decoration:line-through;color:var(--text3)}
+.task-checkbox{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition);font-size:0.8rem;flex-shrink:0}
+.task-checkbox.checked{background:var(--success);border-color:var(--success);color:#fff}
+.task-text{flex:1;font-size:0.9rem}
+.task-priority{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.task-priority.high{background:var(--accent)}.task-priority.medium{background:var(--warning)}.task-priority.low{background:var(--success)}
+.task-deadline{font-size:0.75rem;color:var(--text3);white-space:nowrap}
+.eisenhower-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+.eisenhower-quadrant{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;min-height:150px}
+.eisenhower-quadrant h4{font-size:0.85rem;margin-bottom:10px}
+.eisenhower-quadrant .q-task{padding:6px 0;color:var(--text2);font-size:0.85rem}
+.habit-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px}
+.habit-name{flex:1;font-weight:500;font-size:0.9rem}
+.habit-streak{font-size:0.8rem;color:var(--warning);font-weight:600}
+.habit-check{width:28px;height:28px;border-radius:8px;border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+.habit-check.done{background:var(--success);border-color:var(--success);color:#fff}
+.habit-delete{opacity:0;transition:opacity var(--transition);cursor:pointer;color:var(--accent);font-size:0.85rem}
+.habit-item:hover .habit-delete{opacity:1}
+.heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:16px 0}
+.heatmap-cell{aspect-ratio:1;border-radius:4px;background:var(--bg);border:1px solid var(--border)}
+.heatmap-cell.l1{background:rgba(108,99,255,0.15)}.heatmap-cell.l2{background:rgba(108,99,255,0.3)}.heatmap-cell.l3{background:rgba(108,99,255,0.5)}.heatmap-cell.l4{background:var(--primary)}
+.settings-section{margin-bottom:32px}
+.settings-section h3{font-size:1.1rem;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.setting-item{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
+.setting-item:last-child{border-bottom:none}
+.setting-label{font-size:0.9rem}.setting-desc{font-size:0.8rem;color:var(--text3)}
+.toggle-switch{width:48px;height:26px;border-radius:13px;background:var(--bg);border:2px solid var(--border);position:relative;cursor:pointer;transition:all var(--transition)}
+.toggle-switch.active{background:var(--primary);border-color:var(--primary)}
+.toggle-switch::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:all var(--transition);box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.toggle-switch.active::after{left:24px}
+.color-options{display:flex;gap:10px;margin-top:8px}
+.color-option{width:36px;height:36px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all var(--transition)}
+.color-option:hover,.color-option.active{border-color:var(--text);transform:scale(1.1)}
+.emoji-picker{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.emoji-option{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;cursor:pointer;background:var(--bg);border:2px solid var(--border);transition:all var(--transition)}
+.emoji-option:hover,.emoji-option.active{border-color:var(--primary);background:var(--surface2);transform:scale(1.1)}
+.avatar-upload-area{display:flex;align-items:center;gap:16px;margin-top:12px;padding:16px;background:var(--bg);border-radius:var(--radius-sm);border:2px dashed var(--border)}
+.avatar-preview{width:64px;height:64px;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0}
+.avatar-preview img{width:100%;height:100%;object-fit:cover}
+.fab{position:fixed;bottom:24px;right:24px;z-index:90;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-size:1.5rem;display:none;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(108,99,255,0.4);cursor:pointer;transition:all var(--transition)}
+.fab:hover{transform:scale(1.1)}.app-active .fab{display:flex}
+.confetti-piece{position:fixed;z-index:99999;width:10px;height:10px;animation:confetti 2s ease forwards;pointer-events:none}
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:var(--surface);border-top:1px solid var(--border);z-index:100;padding:0 10px}
+.bottom-nav-items{display:flex;height:100%;align-items:center;justify-content:space-around}
+.bottom-nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.65rem;color:var(--text3);cursor:pointer;padding:4px 8px;transition:all var(--transition)}
+.bottom-nav-item .bnav-icon{font-size:1.3rem}.bottom-nav-item.active{color:var(--primary)}
+.sidebar-overlay{display:none;position:fixed;inset:0;z-index:99;background:rgba(0,0,0,0.5)}.sidebar-overlay.active{display:block}
+/* Diary viewer */
+.diary-entry{background:var(--bg);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px;border-left:4px solid var(--primary)}
+.diary-entry .diary-date{font-weight:700;font-size:0.9rem;margin-bottom:4px}.diary-entry .diary-mood{font-size:1.4rem}.diary-entry .diary-note{font-size:0.85rem;color:var(--text2);margin-top:4px}
+.diary-entry .diary-tags{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.diary-entry .diary-tags span{font-size:0.7rem;padding:2px 8px;border-radius:10px;background:var(--surface2);color:var(--primary)}
+@media(max-width:1024px){
+  .sidebar{width:var(--sidebar-collapsed)}.sidebar .sidebar-logo{opacity:0;width:0}.sidebar .menu-item-text{opacity:0;width:0}.sidebar .menu-item{justify-content:center;padding:12px}.sidebar .profile-name,.sidebar .profile-level,.sidebar .xp-bar{display:none}.sidebar .profile-avatar{width:40px;height:40px;font-size:1.2rem;margin-bottom:0}.sidebar .sidebar-profile{padding:12px}.main-wrapper{margin-left:var(--sidebar-collapsed)}
+  .features-grid{grid-template-columns:repeat(2,1fr)}.hero-content{grid-template-columns:1fr;text-align:center}.hero-text{align-items:center}.hero-visual{order:-1}.hero-mockup{max-width:360px}.footer-grid{grid-template-columns:repeat(2,1fr)}.stats-grid{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.finance-summary{grid-template-columns:1fr}.eisenhower-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .navbar{padding:10px 20px}.nav-menu{display:none}.hero{padding:100px 20px 60px}.section{padding:60px 20px}.features-grid{grid-template-columns:1fr}.steps-container{flex-direction:column;align-items:center;gap:30px}.steps-line{display:none}.stats-section{margin:0 20px;padding:40px 20px}.stats-grid{grid-template-columns:repeat(2,1fr);gap:20px}.cta-section{margin:40px 20px;padding:50px 20px}.cta-form{flex-direction:column}.footer-grid{grid-template-columns:1fr}.testimonial-card{min-width:280px}
+  .sidebar{transform:translateX(-100%);width:var(--sidebar-w);z-index:200}.sidebar.mobile-open{transform:translateX(0)}.sidebar .sidebar-logo{opacity:1;width:auto}.sidebar .menu-item-text{opacity:1;width:auto}.sidebar .menu-item{justify-content:flex-start;padding:12px 16px}.sidebar .profile-name,.sidebar .profile-level,.sidebar .xp-bar{display:block}.sidebar .profile-avatar{width:56px;height:56px;font-size:1.6rem;margin-bottom:8px}.sidebar .sidebar-profile{padding:20px}
+  .main-wrapper{margin-left:0}.hamburger{display:block}.topbar-search{max-width:none;margin:0 10px}.content-area{padding:16px;padding-bottom:80px}.bottom-nav{display:block}.stat-cards{grid-template-columns:repeat(2,1fr)}.user-menu-name{display:none}.topbar-greeting{font-size:0.9rem}.hero-buttons{justify-content:center}.hero-trust{justify-content:center}
+}
+@media(max-width:480px){.stat-cards{grid-template-columns:1fr}.hero h1{font-size:1.8rem}.modal{padding:24px;margin:10px}}
+</style>
+</head>
+<body>
+<div id="toast-container"></div>
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('authModal')"><i class="fas fa-times"></i></div>
+    <div style="text-align:center;margin-bottom:8px"><i class="fas fa-lock" style="color:var(--primary);font-size:2rem"></i></div>
+    <h2 style="text-align:center">Chào mừng bạn!</h2>
+    <p style="text-align:center">Đăng nhập để bắt đầu quản lý cuộc sống thông minh</p>
+    <div class="auth-tabs"><div class="auth-tab active" onclick="switchAuthTab('login')">Đăng nhập</div><div class="auth-tab" onclick="switchAuthTab('register')">Đăng ký</div></div>
+    <div id="loginForm">
+      <div class="form-group"><label>Email</label><input type="email" class="input-field" placeholder="email@example.com" id="loginEmail"></div>
+      <div class="form-group"><label>Mật khẩu</label><input type="password" class="input-field" placeholder="••••••••" id="loginPass"></div>
+      <div class="form-row"><label><input type="checkbox"> Ghi nhớ đăng nhập</label><a href="#">Quên mật khẩu?</a></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="handleLogin()">Đăng nhập</button>
+      <div class="auth-divider">hoặc</div>
+      <button class="btn-google" onclick="handleLogin()"><i class="fab fa-google" style="color:#4285F4"></i> Đăng nhập với Google</button>
+      <p style="text-align:center;margin-top:12px;font-size:0.85rem;color:var(--text3)"><i class="fas fa-lightbulb" style="color:var(--warning)"></i> Nhấn đăng nhập để vào chế độ Demo</p>
+    </div>
+    <div id="registerForm" style="display:none">
+      <div class="form-group"><label>Họ tên</label><input type="text" class="input-field" placeholder="Nguyễn Văn A" id="regName"></div>
+      <div class="form-group"><label>Email</label><input type="email" class="input-field" placeholder="email@example.com" id="regEmail"></div>
+      <div class="form-group"><label>Mật khẩu</label><input type="password" class="input-field" placeholder="Tối thiểu 6 ký tự" id="regPass"></div>
+      <div class="form-group"><label>Xác nhận mật khẩu</label><input type="password" class="input-field" placeholder="Nhập lại mật khẩu" id="regConfirm"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="handleRegister()">Tạo tài khoản</button>
+      <div class="auth-divider">hoặc</div>
+      <button class="btn-google" onclick="handleLogin()"><i class="fab fa-google" style="color:#4285F4"></i> Đăng ký với Google</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="transModal">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('transModal')"><i class="fas fa-times"></i></div>
+    <h2><i class="fas fa-plus-circle" style="color:var(--primary)"></i> Thêm giao dịch</h2>
+    <p>Ghi lại thu chi của bạn</p>
+    <div style="display:flex;gap:8px;margin-bottom:16px"><button class="btn btn-sm" id="transTypeExpense" onclick="setTransType('expense')" style="flex:1;background:var(--accent);color:#fff;justify-content:center">Chi tiêu</button><button class="btn btn-sm btn-outline" id="transTypeIncome" onclick="setTransType('income')" style="flex:1;justify-content:center">Thu nhập</button></div>
+    <div class="form-group"><label>Số tiền (VND)</label><input type="number" class="input-field" placeholder="0" id="transAmount" style="font-size:1.4rem;font-weight:700;text-align:center"></div>
+    <div class="form-group"><label>Danh mục</label><select class="input-field" id="transCategory"><option value="🍜 Ăn uống">🍜 Ăn uống</option><option value="🚗 Di chuyển">🚗 Di chuyển</option><option value="🎮 Giải trí">🎮 Giải trí</option><option value="📚 Học tập">📚 Học tập</option><option value="🛍️ Mua sắm">🛍️ Mua sắm</option><option value="💊 Sức khỏe">💊 Sức khỏe</option><option value="🏠 Nhà ở">🏠 Nhà ở</option><option value="💼 Lương">💼 Lương</option><option value="🎁 Thưởng">🎁 Thưởng</option><option value="📦 Khác">📦 Khác</option></select></div>
+    <div class="form-group"><label>Ghi chú</label><input type="text" class="input-field" placeholder="Ghi chú (tùy chọn)" id="transNote"></div>
+    <div class="form-group"><label>Ngày</label><input type="date" class="input-field" id="transDate"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="addTransaction()">Lưu giao dịch</button>
+  </div>
+</div>
+<div class="modal-overlay" id="taskModal">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('taskModal')"><i class="fas fa-times"></i></div>
+    <h2><i class="fas fa-check-circle" style="color:var(--success)"></i> Thêm công việc</h2>
+    <div class="form-group"><label>Tên công việc</label><input type="text" class="input-field" placeholder="Nh��p công việc..." id="taskName"></div>
+    <div class="form-group"><label>Độ ưu tiên</label><select class="input-field" id="taskPriority"><option value="high">🔴 Cao</option><option value="medium" selected>🟡 Trung bình</option><option value="low">🟢 Thấp</option></select></div>
+    <div class="form-group"><label>Deadline</label><input type="date" class="input-field" id="taskDeadline"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="addTask()">Thêm công việc</button>
+  </div>
+</div>
+<div class="modal-overlay" id="habitModal">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('habitModal')"><i class="fas fa-times"></i></div>
+    <h2><i class="fas fa-fire" style="color:var(--warning)"></i> Thêm thói quen</h2>
+    <div class="form-group"><label>Tên thói quen</label><input type="text" class="input-field" placeholder="VD: Tập thể dục..." id="habitName"></div>
+    <div class="form-group"><label>Icon</label>
+      <div class="emoji-picker" id="habitIconPicker">
+        <div class="emoji-option active" data-icon="🏃">🏃</div><div class="emoji-option" data-icon="📖">📖</div><div class="emoji-option" data-icon="🧘">🧘</div><div class="emoji-option" data-icon="⏰">⏰</div><div class="emoji-option" data-icon="💧">💧</div><div class="emoji-option" data-icon="🎸">🎸</div><div class="emoji-option" data-icon="✍️">✍️</div><div class="emoji-option" data-icon="🍎">🍎</div><div class="emoji-option" data-icon="💪">💪</div><div class="emoji-option" data-icon="🧠">🧠</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="addHabit()">Thêm thói quen</button>
+  </div>
+</div>
+
+<!-- LANDING PAGE -->
+<div id="landing-page">
+  <nav class="navbar" id="navbar">
+    <div class="nav-logo"><div class="logo-icon"><i class="fas fa-infinity"></i></div><span class="gradient-text">LifeSync AI</span></div>
+    <div class="nav-menu"><a href="#features">Tính năng</a><a href="#how-it-works">Cách hoạt động</a><a href="#testimonials">Đánh giá</a><a href="#faq">FAQ</a></div>
+    <div class="nav-actions">
+      <div class="theme-toggle" onclick="toggleTheme()" title="Chuyển chế độ"><i class="fas fa-moon" id="themeIcon1"></i></div>
+      <button class="btn btn-primary btn-sm" onclick="openModal('authModal')"><i class="fas fa-sign-in-alt"></i> Bắt đầu miễn phí</button>
+    </div>
+  </nav>
+  <section class="hero">
+    <div class="hero-bg"><canvas id="particles-canvas"></canvas><div class="hero-gradient hero-gradient-1"></div><div class="hero-gradient hero-gradient-2"></div><div class="hero-gradient hero-gradient-3"></div></div>
+    <div class="hero-content">
+      <div class="hero-text">
+        <div class="hero-badge"><i class="fas fa-rocket"></i> 100% Miễn phí — Powered by AI</div>
+        <h1>Quản lý cuộc sống<br><span class="gradient-text">thông minh với AI</span></h1>
+        <p class="hero-subtitle">Tài chính • Sức khỏe tinh thần • Học tập • Sức khỏe • Năng suất — Tất cả trong một nền tảng duy nhất</p>
+        <div class="hero-buttons"><button class="btn btn-primary" onclick="openModal('authModal')"><i class="fas fa-bolt"></i> Khám phá ngay</button></div>
+        <div class="hero-trust"><span class="trust-item"><i class="fas fa-users"></i> 10,000+ người dùng</span><span class="trust-item"><i class="fas fa-star"></i> 4.9/5 đánh giá</span><span class="trust-item"><i class="fas fa-shield-alt"></i> Bảo mật cao</span></div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-mockup" id="heroMockup">
+          <div class="mockup-card mockup-card-1"><h4>📊 Tổng quan hôm nay</h4><div class="mockup-bar mockup-bar-1"></div><div class="mockup-bar mockup-bar-2"></div><div class="mockup-bar mockup-bar-3"></div><div class="mockup-stat">😊 Tâm trạng: Vui vẻ</div></div>
+          <div class="mockup-card mockup-card-2"><h4>💰 Chi tiêu tháng</h4><div class="mockup-bar mockup-bar-4"></div><div class="mockup-bar mockup-bar-1" style="width:50%"></div><div class="mockup-stat">Tiết kiệm: 2,500,000đ</div></div>
+          <div class="mockup-card mockup-card-3"><h4>🍅 Pomodoro</h4><div style="font-size:1.6rem;font-weight:800;margin-top:8px">23:45</div><div class="mockup-stat">Session #3</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="features">
+    <div class="section-header"><div class="badge" style="margin-bottom:12px"><i class="fas fa-star"></i> Tính năng</div><h2>6 Module AI <span class="gradient-text">Thông Minh</span></h2><p>Mỗi module được tối ưu bằng AI để mang đến trải nghiệm cá nhân hóa tốt nhất</p></div>
+    <div class="features-grid">
+      <div class="feature-card observe"><span class="feature-icon">💰</span><h3>AI Finance</h3><p>Quản lý chi tiêu thông minh, AI phân tích thói quen tài chính và gợi ý tiết kiệm</p></div>
+      <div class="feature-card observe"><span class="feature-icon">🧠</span><h3>AI Mind Care</h3><p>Chăm sóc sức khỏe tinh thần, phát hiện sớm dấu hiệu stress và lo âu</p></div>
+      <div class="feature-card observe"><span class="feature-icon">📚</span><h3>AI Study</h3><p>Pomodoro timer thông minh giúp tập trung học tập hiệu quả hơn</p></div>
+      <div class="feature-card observe"><span class="feature-icon">🏋️</span><h3>AI Health</h3><p>BMI Calculator và AI đề xuất cải thiện sức khỏe, thể chất tốt hơn</p></div>
+      <div class="feature-card observe"><span class="feature-icon">⏰</span><h3>AI Productivity</h3><p>Quản lý công việc, thói quen và tối ưu năng suất với AI</p></div>
+      <div class="feature-card observe"><span class="feature-icon">🤖</span><h3>AI Assistant</h3><p>Trợ lý AI tổng hợp, hiểu context cuộc sống bạn để đưa ra lời khuyên</p></div>
+    </div>
+  </section>
+  <section class="section" id="how-it-works">
+    <div class="section-header"><div class="badge" style="margin-bottom:12px"><i class="fas fa-cogs"></i> Cách hoạt động</div><h2>Bắt đầu trong <span class="gradient-text">3 bước đơn giản</span></h2></div>
+    <div class="steps-container"><div class="steps-line"></div>
+      <div class="step observe"><div class="step-number">1</div><h3>Truy cập & Đăng ký</h3><p>Mở web, tạo tài khoản chỉ trong 10 giây</p></div>
+      <div class="step observe"><div class="step-number">2</div><h3>Chọn mục tiêu</h3><p>AI giúp thiết lập mục tiêu cá nhân phù hợp</p></div>
+      <div class="step observe"><div class="step-number">3</div><h3>AI đồng hành</h3><p>Nhận gợi ý thông minh mỗi ngày</p></div>
+    </div>
+  </section>
+  <section class="section" id="testimonials">
+    <div class="section-header"><div class="badge" style="margin-bottom:12px"><i class="fas fa-comments"></i> Đánh giá</div><h2>Người dùng nói gì về <span class="gradient-text">LifeSync AI</span></h2></div>
+    <div class="testimonials-track" id="testimonialsTrack">
+      <div class="testimonial-card"><div class="testimonial-header"><div class="testimonial-avatar">M</div><div class="testimonial-info"><h4>Minh Tuấn</h4><span>SV Bách Khoa HCM</span></div></div><div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><p class="testimonial-text">"LifeSync giúp mình tiết kiệm được 2 triệu/tháng!"</p></div>
+      <div class="testimonial-card"><div class="testimonial-header"><div class="testimonial-avatar" style="background:linear-gradient(135deg,#FF6B6B,#FFB84D)">L</div><div class="testimonial-info"><h4>Thu Linh</h4><span>Học sinh lớp 12</span></div></div><div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><p class="testimonial-text">"Bài tập thở giúp mình giảm stress trước khi thi."</p></div>
+      <div class="testimonial-card"><div class="testimonial-header"><div class="testimonial-avatar" style="background:linear-gradient(135deg,#00D4AA,#4ADE80)">H</div><div class="testimonial-info"><h4>Quốc Hùng</h4><span>Nhân viên văn phòng</span></div></div><div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><p class="testimonial-text">"Năng suất tăng 40% sau 1 tháng dùng Pomodoro!"</p></div>
+      <div class="testimonial-card"><div class="testimonial-header"><div class="testimonial-avatar" style="background:linear-gradient(135deg,#8B5CF6,#EC4899)">A</div><div class="testimonial-info"><h4>Ngọc Anh</h4><span>Freelancer</span></div></div><div class="testimonial-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><p class="testimonial-text">"Giao diện đẹp, AI assistant rất thông minh!"</p></div>
+    </div>
+  </section>
+  <div class="stats-section observe"><div class="stats-grid"><div class="stat-item"><span class="stat-number" data-target="10000">0</span><span class="stat-label">Người dùng</span></div><div class="stat-item"><span class="stat-number" data-target="500000">0</span><span class="stat-label">Task hoàn thành</span></div><div class="stat-item"><span class="stat-number" data-target="98" data-suffix="%">0</span><span class="stat-label">Hài lòng</span></div><div class="stat-item"><span class="stat-number" data-target="6">0</span><span class="stat-label">Module AI</span></div></div></div>
+  <section class="section" id="faq">
+    <div class="section-header"><div class="badge" style="margin-bottom:12px"><i class="fas fa-question-circle"></i> FAQ</div><h2>Câu hỏi <span class="gradient-text">thường gặp</span></h2></div>
+    <div class="faq-list">
+      <div class="faq-item"><div class="faq-question" onclick="toggleFAQ(this)"><span>LifeSync AI có miễn phí không?</span><span class="faq-arrow"><i class="fas fa-chevron-down"></i></span></div><div class="faq-answer"><p>Hoàn toàn miễn phí! Tất cả module AI đều được sử dụng không giới hạn.</p></div></div>
+      <div class="faq-item"><div class="faq-question" onclick="toggleFAQ(this)"><span>Dữ liệu có an toàn không?</span><span class="faq-arrow"><i class="fas fa-chevron-down"></i></span></div><div class="faq-answer"><p>Dữ liệu được lưu trữ cục bộ trên thiết bị của b��n. Chúng tôi không thu thập dữ liệu cá nhân.</p></div></div>
+      <div class="faq-item"><div class="faq-question" onclick="toggleFAQ(this)"><span>Cần cài đặt gì không?</span><span class="faq-arrow"><i class="fas fa-chevron-down"></i></span></div><div class="faq-answer"><p>Không cần cài đặt! Chạy hoàn toàn trên trình duyệt web.</p></div></div>
+    </div>
+  </section>
+  <section class="cta-section observe">
+    <h2>Bắt đầu thay đổi cuộc sống ngay hôm nay <i class="fas fa-rocket"></i></h2>
+    <p>Tham gia cùng 10,000+ người dùng đang cải thiện cuộc sống mỗi ngày</p>
+    <div class="cta-form"><input type="email" placeholder="Nhập email của bạn..."><button class="btn" onclick="openModal('authModal')">Đăng ký miễn phí</button></div>
+  </section>
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo" style="margin-bottom:8px"><div class="logo-icon"><i class="fas fa-infinity"></i></div><span class="gradient-text">LifeSync AI</span></div>
+        <p>Người bạn đồng hành số — Sống khỏe, học giỏi, tiêu thông minh</p>
+        <div class="social-links">
+          <a class="social-link fb" href="https://www.facebook.com/nguynqan23629/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a class="social-link yt" href="https://www.youtube.com/@NDMQ236" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+          <a class="social-link gh" href="https://github.com/ndmq23629" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+          <a class="social-link dc" href="https://discord.gg/EUk5c5CC" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
+          <a class="social-link em" href="mailto:nguyenducminhquang94@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>Tính năng</h4><a href="#">AI Finance</a><a href="#">AI Mind Care</a><a href="#">AI Study</a><a href="#">AI Health</a><a href="#">AI Productivity</a></div>
+      <div class="footer-col"><h4>Hỗ trợ</h4><a href="#">Hướng dẫn sử dụng</a><a href="#">Câu hỏi thường gặp</a><a href="#">Báo lỗi</a><a href="#">Góp ý</a></div>
+      <div class="footer-col"><h4>Liên hệ</h4><a href="mailto:nguyenducminhquang94@gmail.com"><i class="fas fa-envelope"></i> Email</a><a href="https://github.com/ndmq23629" target="_blank"><i class="fab fa-github"></i> GitHub</a><a href="https://discord.gg/EUk5c5CC" target="_blank"><i class="fab fa-discord"></i> Discord</a></div>
+    </div>
+    <div class="footer-bottom">Made with <i class="fas fa-heart" style="color:var(--accent)"></i> by NDMQ | &copy; 2025 LifeSync AI</div>
+  </footer>
+</div>
+
+<!-- DASHBOARD -->
+<div id="app-dashboard">
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
+  <div class="dashboard">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header"><div class="logo-icon" style="width:34px;height:34px;min-width:34px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;display:flex;align-items:center;justify-content:center;font-size:1rem"><i class="fas fa-infinity"></i></div><span class="sidebar-logo gradient-text">LifeSync AI</span></div>
+      <div class="sidebar-profile"><div class="profile-avatar" id="sidebarAvatar">😊</div><div class="profile-name" id="sidebarName">Người dùng</div><div class="profile-level" id="sidebarLevel">🌱 Level 1 — Newbie</div><div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div></div>
+      <nav class="sidebar-menu">
+        <div class="menu-item active" onclick="navigateTo('dashboard')" data-page="dashboard"><span class="menu-item-icon"><i class="fas fa-chart-pie"></i></span><span class="menu-item-text">Tổng quan</span></div>
+        <div class="menu-item" onclick="navigateTo('finance')" data-page="finance"><span class="menu-item-icon"><i class="fas fa-wallet"></i></span><span class="menu-item-text">Tài chính</span></div>
+        <div class="menu-item" onclick="navigateTo('mind')" data-page="mind"><span class="menu-item-icon"><i class="fas fa-brain"></i></span><span class="menu-item-text">Sức khỏe tinh thần</span></div>
+        <div class="menu-item" onclick="navigateTo('study')" data-page="study"><span class="menu-item-icon"><i class="fas fa-book"></i></span><span class="menu-item-text">Học tập</span></div>
+        <div class="menu-item" onclick="navigateTo('health')" data-page="health"><span class="menu-item-icon"><i class="fas fa-heartbeat"></i></span><span class="menu-item-text">Sức khỏe</span></div>
+        <div class="menu-item" onclick="navigateTo('productivity')" data-page="productivity"><span class="menu-item-icon"><i class="fas fa-tasks"></i></span><span class="menu-item-text">Năng suất</span></div>
+        <div class="menu-item" onclick="navigateTo('assistant')" data-page="assistant"><span class="menu-item-icon"><i class="fas fa-robot"></i></span><span class="menu-item-text">Trợ lý AI</span></div>
+        <div class="menu-item" onclick="navigateTo('settings')" data-page="settings"><span class="menu-item-icon"><i class="fas fa-cog"></i></span><span class="menu-item-text">Cài đặt</span></div>
+      </nav>
+      <div class="sidebar-toggle"><button onclick="toggleSidebar()" title="Thu gọn"><i class="fas fa-chevron-left"></i></button></div>
+    </aside>
+    <div class="main-wrapper">
+      <div class="topbar">
+        <div class="topbar-left"><div class="hamburger" onclick="toggleMobileSidebar()"><i class="fas fa-bars"></i></div><span class="topbar-greeting" id="topbarGreeting">Chào buổi sáng!</span></div>
+        <div class="topbar-search"><span class="search-icon"><i class="fas fa-search"></i></span><input type="text" placeholder="Tìm kiếm..." id="globalSearch" onkeypress="if(event.key==='Enter')handleSearch()"></div>
+        <div class="topbar-right">
+          <div class="btn-icon notif-btn" title="Thông báo" onclick="showNotifications()"><i class="fas fa-bell"></i><span class="notif-badge" id="notifBadge">3</span></div>
+          <div class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon" id="themeIcon2"></i></div>
+          <div class="user-menu"><div class="user-menu-avatar" id="topAvatar">😊</div><span class="user-menu-name" id="topName">Người dùng</span></div>
+        </div>
+      </div>
+      <div class="content-area" id="contentArea"></div>
+    </div>
+  </div>
+  <nav class="bottom-nav"><div class="bottom-nav-items">
+    <div class="bottom-nav-item active" onclick="navigateTo('dashboard')" data-page="dashboard"><span class="bnav-icon"><i class="fas fa-chart-pie"></i></span>Tổng quan</div>
+    <div class="bottom-nav-item" onclick="navigateTo('finance')" data-page="finance"><span class="bnav-icon"><i class="fas fa-wallet"></i></span>Tài chính</div>
+    <div class="bottom-nav-item" onclick="navigateTo('mind')" data-page="mind"><span class="bnav-icon"><i class="fas fa-brain"></i></span>Tinh thần</div>
+    <div class="bottom-nav-item" onclick="navigateTo('productivity')" data-page="productivity"><span class="bnav-icon"><i class="fas fa-tasks"></i></span>Năng suất</div>
+    <div class="bottom-nav-item" onclick="navigateTo('assistant')" data-page="assistant"><span class="bnav-icon"><i class="fas fa-robot"></i></span>AI</div>
+  </div></nav>
+  <div class="fab" id="fab" onclick="handleFAB()"><i class="fas fa-plus"></i></div>
+</div>
+
+<script>
+// Do file quá dài, tôi sẽ đặt toàn bộ JavaScript ở đây
+// Đảm bảo KHÔNG có ký tự $ nào trong code
+
+let APP={currentPage:'dashboard',isLoggedIn:false,theme:'light',sidebarCollapsed:false,transactionType:'expense',pomodoroTimer:null,pomodoroTime:25*60,pomodoroRunning:false,pomodoroSession:0,breathingTimer:null,breathingPhase:'idle',charts:{},calMonth:new Date().getMonth(),calYear:new Date().getFullYear()};
+
+function generateSampleData(){
+  const today=new Date(),fmt=d=>d.toISOString().split('T')[0];
+  const days=n=>{let d=new Date(today);d.setDate(d.getDate()-n);return fmt(d)};
+  return{
+    user:{name:'Người dùng',avatar:'😊',avatarUrl:'',level:1,xp:0,theme:'light'},
+    finance:{transactions:[
+      {id:1,amount:35000,category:'🍜 Ăn uống',note:'Phở sáng',type:'expense',date:days(0)},
+      {id:2,amount:50000,category:'🍜 Ăn uống',note:'Cơm trưa',type:'expense',date:days(0)},
+      {id:3,amount:15000,category:'🚗 Di chuyển',note:'Grab',type:'expense',date:days(0)},
+      {id:4,amount:5000000,category:'💼 Lương',note:'Lương tháng',type:'income',date:days(1)},
+      {id:5,amount:200000,category:'🛍️ Mua sắm',note:'Áo mới',type:'expense',date:days(1)},
+      {id:6,amount:45000,category:'🍜 Ăn uống',note:'Bún bò',type:'expense',date:days(1)},
+      {id:7,amount:100000,category:'🎮 Giải trí',note:'Xem phim',type:'expense',date:days(2)},
+      {id:8,amount:30000,category:'🍜 Ăn uống',note:'Bánh mì',type:'expense',date:days(2)},
+      {id:9,amount:500000,category:'📚 Học tập',note:'Sách',type:'expense',date:days(3)},
+      {id:10,amount:1000000,category:'🎁 Thưởng',note:'Bonus',type:'income',date:days(3)},
+      {id:11,amount:80000,category:'💊 Sức khỏe',note:'Vitamin',type:'expense',date:days(4)},
+      {id:12,amount:55000,category:'🍜 Ăn uống',note:'Lẩu',type:'expense',date:days(5)},
+      {id:13,amount:150000,category:'🎮 Giải trí',note:'Cafe',type:'expense',date:days(6)}
+    ]},
+    mood:{entries:[
+      {date:days(0),mood:4,note:'Ngày tốt lành!',tags:['công_việc']},
+      {date:days(1),mood:5,note:'Rất vui đi chơi',tags:['bạn_bè']},
+      {date:days(2),mood:3,note:'Hơi mệt',tags:['công_việc']},
+      {date:days(3),mood:4,note:'Năng lượng tốt',tags:['sức_khỏe']},
+      {date:days(4),mood:2,note:'Áp lực deadline',tags:['công_việc']},
+      {date:days(5),mood:4,note:'Hoàn thành dự án!',tags:['công_việc']},
+      {date:days(6),mood:3,note:'Bình thường',tags:['gia_đình']}
+    ],gratitude:[{date:days(0),items:['Được ngủ ngon','Bạn bè quan tâm','Trời đẹp']}]},
+    health:{bmi:{height:170,weight:65}},
+    productivity:{
+      tasks:[
+        {id:1,name:'Hoàn thành bài tập Toán',priority:'high',deadline:fmt(today),completed:true},
+        {id:2,name:'Đọc chương 5 sách Python',priority:'medium',deadline:fmt(today),completed:false},
+        {id:3,name:'Gửi email cho thầy',priority:'high',deadline:fmt(today),completed:true},
+        {id:4,name:'Tập gym 30 phút',priority:'medium',deadline:fmt(today),completed:false},
+        {id:5,name:'Review code PR',priority:'high',deadline:days(-1),completed:false},
+        {id:6,name:'Viết blog tuần này',priority:'medium',deadline:days(-2),completed:false},
+        {id:7,name:'Ôn thi Tiếng Anh',priority:'high',deadline:days(-3),completed:false}
+      ],
+      habits:[
+        {id:1,name:'Tập thể dục',icon:'🏃',streak:7,history:Array(30).fill(0).map((_,i)=>i<7?1:Math.random()>0.5?1:0)},
+        {id:2,name:'Đọc sách 30p',icon:'📖',streak:3,history:Array(30).fill(0).map((_,i)=>i<3?1:Math.random()>0.6?1:0)},
+        {id:3,name:'Thiền 10 phút',icon:'🧘',streak:5,history:Array(30).fill(0).map((_,i)=>i<5?1:Math.random()>0.5?1:0)},
+        {id:4,name:'Dậy trước 7h',icon:'⏰',streak:2,history:Array(30).fill(0).map((_,i)=>i<2?1:Math.random()>0.5?1:0)},
+        {id:5,name:'Uống đủ nước',icon:'💧',streak:4,history:Array(30).fill(0).map((_,i)=>i<4?1:Math.random()>0.5?1:0)}
+      ]
+    },
+    chat:{messages:[{role:'ai',text:'Chào bạn! Mình là trợ lý AI của LifeSync. Bạn cần mình giúp gì hôm nay? 😊',time:Date.now()}]},
+    settings:{accentColor:'#6C63FF'}
+  };
+}
+
+function loadData(){try{let d=localStorage.getItem('lifesync_data');return d?JSON.parse(d):generateSampleData()}catch(e){return generateSampleData()}}
+function saveData(){localStorage.setItem('lifesync_data',JSON.stringify(window.DATA))}
+function initData(){window.DATA=loadData();if(!window.DATA.health)window.DATA.health={bmi:{height:170,weight:65}};saveData()}
+function toggleTheme(){APP.theme=APP.theme==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',APP.theme);localStorage.setItem('lifesync_theme',APP.theme);const ic=APP.theme==='dark'?'fa-sun':'fa-moon';document.querySelectorAll('#themeIcon1,#themeIcon2').forEach(e=>{if(e)e.className='fas '+ic});if(window.DATA){window.DATA.user.theme=APP.theme;saveData()}if(APP.isLoggedIn)setTimeout(()=>renderCurrentPage(),100)}
+function loadTheme(){const s=localStorage.getItem('lifesync_theme')||'light';APP.theme=s;document.documentElement.setAttribute('data-theme',s);setTimeout(()=>{const ic=s==='dark'?'fa-sun':'fa-moon';document.querySelectorAll('#themeIcon1,#themeIcon2').forEach(e=>{if(e)e.className='fas '+ic})},0)}
+function openModal(id){document.getElementById(id).classList.add('active')}
+function closeModal(id){document.getElementById(id).classList.remove('active')}
+function switchAuthTab(tab){document.querySelectorAll('.auth-tab').forEach((e,i)=>{e.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1))});document.getElementById('loginForm').style.display=tab==='login'?'block':'none';document.getElementById('registerForm').style.display=tab==='register'?'block':'none'}
+function handleLogin(){const n=document.getElementById('regName');if(n&&n.value.trim()){window.DATA.user.name=n.value.trim();saveData()}closeModal('authModal');enterDashboard()}
+function handleRegister(){const name=document.getElementById('regName').value.trim()||'Người dùng';window.DATA.user.name=name;saveData();closeModal('authModal');enterDashboard()}
+function enterDashboard(){APP.isLoggedIn=true;localStorage.setItem('lifesync_loggedin','true');document.getElementById('landing-page').style.display='none';document.getElementById('app-dashboard').style.display='block';document.body.classList.add('app-active');updateUserUI();updateGreeting();navigateTo('dashboard')}
+function logout(){APP.isLoggedIn=false;localStorage.removeItem('lifesync_loggedin');document.getElementById('landing-page').style.display='block';document.getElementById('app-dashboard').style.display='none';document.body.classList.remove('app-active');destroyCharts()}
+function getAvatarHTML(){const u=window.DATA.user;if(u.avatarUrl)return '<img src="'+u.avatarUrl+'" alt="av">';return u.avatar||'😊'}
+function updateUserUI(){const u=window.DATA.user;document.getElementById('sidebarAvatar').innerHTML=getAvatarHTML();document.getElementById('topAvatar').innerHTML=getAvatarHTML();document.getElementById('sidebarName').textContent=u.name;document.getElementById('topName').textContent=u.name;updateLevel()}
+function updateLevel(){
+  const xp=window.DATA.user.xp;
+  const levels=[{l:1,min:0,name:'🌱 Newbie'},{l:2,min:100,name:'⭐ Starter'},{l:3,min:300,name:'🔥 Active'},{l:4,min:500,name:'💫 Rising'},{l:5,min:800,name:'💪 Achiever'},{l:6,min:1200,name:'🎯 Pro'},{l:7,min:1800,name:'🏅 Expert'},{l:8,min:2500,name:'👑 Elite'},{l:9,min:3500,name:'🌟 Legend'},{l:10,min:5000,name:'🏆 Master'}];
+  let current=levels[0],next=levels[1];
+  for(let i=levels.length-1;i>=0;i--){if(xp>=levels[i].min){current=levels[i];next=levels[i+1]||levels[i];break}}
+  window.DATA.user.level=current.l;document.getElementById('sidebarLevel').textContent=current.name+' — Level '+current.l;
+  const progress=next.min>current.min?((xp-current.min)/(next.min-current.min))*100:100;
+  document.getElementById('xpFill').style.width=Math.min(progress,100)+'%';
+}
+function addXP(amount){const old=window.DATA.user.level;window.DATA.user.xp+=amount;saveData();updateLevel();if(window.DATA.user.level>old){showToast('🎉 Level Up! Level '+window.DATA.user.level+'!','success');createConfetti()}}
+function updateGreeting(){const h=new Date().getHours();let g,ic;if(h<12){g='Chào buổi sáng';ic='☀️'}else if(h<18){g='Chào buổi chiều';ic='🌤️'}else{g='Chào buổi tối';ic='🌙'}document.getElementById('topbarGreeting').textContent=g+', '+window.DATA.user.name+'! '+ic}
+function showToast(msg,type){const c=document.getElementById('toast-container'),t=document.createElement('div');t.className='toast '+(type||'info');t.innerHTML='<span>'+msg+'</span><span class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></span>';c.appendChild(t);setTimeout(()=>t.remove(),4000)}
+function createConfetti(){const colors=['#6C63FF','#00D4AA','#FF6B6B','#FFB84D','#4ADE80'];for(let i=0;i<30;i++){const p=document.createElement('div');p.className='confetti-piece';p.style.cssText='left:'+Math.random()*100+'vw;top:-10px;background:'+colors[Math.floor(Math.random()*5)]+';border-radius:'+(Math.random()>0.5?'50%':'2px')+';width:'+(6+Math.random()*8)+'px;height:'+(6+Math.random()*8)+'px;animation-duration:'+(1.5+Math.random()*2)+'s;animation-delay:'+Math.random()*0.5+'s;';document.body.appendChild(p);setTimeout(()=>p.remove(),4000)}}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');APP.sidebarCollapsed=!APP.sidebarCollapsed}
+function toggleMobileSidebar(){document.getElementById('sidebar').classList.toggle('mobile-open');document.getElementById('sidebarOverlay').classList.toggle('active')}
+function navigateTo(page){APP.currentPage=page;document.querySelectorAll('.menu-item').forEach(e=>e.classList.toggle('active',e.dataset.page===page));document.querySelectorAll('.bottom-nav-item').forEach(e=>e.classList.toggle('active',e.dataset.page===page));document.getElementById('sidebar').classList.remove('mobile-open');document.getElementById('sidebarOverlay').classList.remove('active');destroyCharts();renderCurrentPage()}
+function destroyCharts(){Object.values(APP.charts).forEach(c=>{if(c&&c.destroy)c.destroy()});APP.charts={}}
+function renderCurrentPage(){const a=document.getElementById('contentArea');a.style.opacity='0';setTimeout(()=>{switch(APP.currentPage){case'dashboard':renderDashboard();break;case'finance':renderFinance();break;case'mind':renderMind();break;case'study':renderStudy();break;case'health':renderHealth();break;case'productivity':renderProductivity();break;case'assistant':renderAssistant();break;case'settings':renderSettings();break}a.style.transition='opacity 0.3s ease';a.style.opacity='1'},150)}
+function formatMoney(n){return new Intl.NumberFormat('vi-VN').format(n)+'đ'}
+function getToday(){return new Date().toISOString().split('T')[0]}
+function getYesterday(){const d=new Date();d.setDate(d.getDate()-1);return d.toISOString().split('T')[0]}
+function getTodayTransactions(){return window.DATA.finance.transactions.filter(t=>t.date===getToday())}
+function getMonthTransactions(){const ym=getToday().substring(0,7);return window.DATA.finance.transactions.filter(t=>t.date.startsWith(ym))}
+function getMoodEmoji(l){return['','😢','😟','😐','😊','🤩'][l]||'😐'}
+function getMoodLabel(l){return['','Rất buồn','Buồn','Bình thường','Vui vẻ','Rất vui'][l]||''}
+function getChartColor(){return APP.theme==='dark'?'#A7A7C4':'#6B6B8D'}
+
+// So sánh chi tiêu thật với hôm qua
+function getExpenseComparison(){
+  const todayExp=window.DATA.finance.transactions.filter(t=>t.date===getToday()&&t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const yestExp=window.DATA.finance.transactions.filter(t=>t.date===getYesterday()&&t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  if(yestExp===0)return{text:'Hôm qua chưa có chi tiêu',cls:'same'};
+  const diff=Math.round(((todayExp-yestExp)/yestExp)*100);
+  if(diff>0)return{text:'<i class="fas fa-arrow-up"></i> '+diff+'% so với hôm qua',cls:'down'};
+  if(diff<0)return{text:'<i class="fas fa-arrow-down"></i> '+Math.abs(diff)+'% so với hôm qua',cls:'up'};
+  return{text:'Bằng với hôm qua',cls:'same'};
+}
+
+function renderDashboard(){
+  const area=document.getElementById('contentArea');
+  const todayTx=getTodayTransactions(),todayExp=todayTx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const todayMood=window.DATA.mood.entries.find(e=>e.date===getToday());
+  const tasks=window.DATA.productivity.tasks,todayDone=tasks.filter(t=>t.deadline===getToday()&&t.completed).length,todayTotal=tasks.filter(t=>t.deadline===getToday()).length;
+  const comp=getExpenseComparison();
+  area.innerHTML='<div class="page-header"><div><h1><i class="fas fa-chart-pie" style="color:var(--primary)"></i> Tổng quan hôm nay</h1><span style="color:var(--text3);font-size:0.9rem">'+new Date().toLocaleDateString('vi-VN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+'</span></div></div>'+
+  '<div class="stat-cards"><div class="stat-card"><div class="stat-card-icon" style="background:rgba(108,99,255,0.1)">💰</div><div class="stat-card-info"><div class="stat-card-label">Chi tiêu hôm nay</div><div class="stat-card-value">'+formatMoney(todayExp)+'</div><div class="stat-card-trend '+comp.cls+'">'+comp.text+'</div></div></div>'+
+  '<div class="stat-card"><div class="stat-card-icon" style="background:rgba(0,212,170,0.1)">🧠</div><div class="stat-card-info"><div class="stat-card-label">Tâm trạng</div><div class="stat-card-value">'+(todayMood?getMoodEmoji(todayMood.mood)+' '+getMoodLabel(todayMood.mood):'❓ Chưa ghi')+'</div></div></div>'+
+  '<div class="stat-card"><div class="stat-card-icon" style="background:rgba(255,184,77,0.1)">✅</div><div class="stat-card-info"><div class="stat-card-label">Tasks hoàn thành</div><div class="stat-card-value">'+todayDone+'/'+(todayTotal||tasks.length)+'</div></div></div></div>'+
+  '<div class="charts-row"><div class="chart-card"><h3>💰 Chi tiêu 7 ngày qua</h3><div class="chart-container"><canvas id="ch1"></canvas></div></div><div class="chart-card"><h3>🧠 Tâm trạng 7 ngày qua</h3><div class="chart-container"><canvas id="ch2"></canvas></div></div></div>'+
+  '<div class="quick-actions"><button class="btn btn-primary btn-sm" onclick="openModal(\'transModal\')"><i class="fas fa-plus"></i> Thêm chi tiêu</button><button class="btn btn-outline btn-sm" onclick="navigateTo(\'mind\')"><i class="fas fa-pen"></i> Ghi mood</button><button class="btn btn-outline btn-sm" onclick="openModal(\'taskModal\')"><i class="fas fa-check"></i> Thêm task</button></div>'+
+  '<div class="ai-insight"><div class="ai-insight-icon">💡</div><div class="ai-insight-text"><strong>AI Insight:</strong> Bạn đã chi '+formatMoney(todayExp)+' hôm nay. '+(todayExp>200000?'Chi tiêu hơi cao, cân nhắc giảm bớt nhé.':'Tốt lắm, bạn đang kiểm soát tốt!')+(!todayMood?' Đừng quên ghi lại tâm trạng!':'')+'</div></div>'+
+  '<div class="data-list"><div class="data-list-header"><h3>📋 Công việc sắp tới</h3></div>'+tasks.filter(t=>!t.completed).slice(0,5).map(t=>'<div class="data-list-item"><span class="task-priority '+t.priority+'"></span><div class="item-info"><div>'+t.name+'</div><div class="item-date">'+t.deadline+'</div></div></div>').join('')+'</div>';
+  setTimeout(()=>{
+    // Expense chart
+    const c1=document.getElementById('ch1');if(c1){const lb=[],dt=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);lb.push(d.toLocaleDateString('vi-VN',{weekday:'short'}));dt.push(window.DATA.finance.transactions.filter(t=>t.date===d.toISOString().split('T')[0]&&t.type==='expense').reduce((s,t)=>s+t.amount,0)/1000)}APP.charts.c1=new Chart(c1,{type:'bar',data:{labels:lb,datasets:[{data:dt,backgroundColor:'rgba(108,99,255,0.6)',borderRadius:8,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:getChartColor()},grid:{color:'rgba(108,99,255,0.08)'}},x:{ticks:{color:getChartColor()},grid:{display:false}}}}})}
+    // Mood chart
+    const c2=document.getElementById('ch2');if(c2){const lb=[],dt=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);lb.push(d.toLocaleDateString('vi-VN',{weekday:'short'}));const e=window.DATA.mood.entries.find(x=>x.date===d.toISOString().split('T')[0]);dt.push(e?e.mood:null)}APP.charts.c2=new Chart(c2,{type:'line',data:{labels:lb,datasets:[{data:dt,borderColor:'#00D4AA',backgroundColor:'rgba(0,212,170,0.1)',fill:true,tension:0.4,pointRadius:6,pointBackgroundColor:dt.map(d=>d>=4?'#4ADE80':d>=3?'#FFB84D':'#FF6B6B')}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:5,ticks:{stepSize:1,color:getChartColor(),callback:v=>['','😢','😟','😐','😊','🤩'][v]||''},grid:{color:'rgba(0,212,170,0.08)'}},x:{ticks:{color:getChartColor()},grid:{display:false}}}}})}
+  },100);
+}
+
+function renderFinance(){
+  const area=document.getElementById('contentArea'),mt=getMonthTransactions();
+  const inc=mt.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const exp=mt.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const bal=inc-exp,catMap={};mt.filter(t=>t.type==='expense').forEach(t=>{catMap[t.category]=(catMap[t.category]||0)+t.amount});
+  const allTx=[...window.DATA.finance.transactions].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+  area.innerHTML='<div class="page-header"><h1><i class="fas fa-wallet" style="color:var(--primary)"></i> Tài chính</h1><button class="btn btn-primary btn-sm" onclick="openModal(\'transModal\')"><i class="fas fa-plus"></i> Thêm giao dịch</button></div>'+
+  '<div class="finance-summary"><div class="summary-card income"><div class="label">Thu nhập tháng</div><div class="amount">'+formatMoney(inc)+'</div></div><div class="summary-card expense"><div class="label">Chi tiêu tháng</div><div class="amount">'+formatMoney(exp)+'</div></div><div class="summary-card balance"><div class="label">Còn lại</div><div class="amount">'+formatMoney(bal)+'</div></div></div>'+
+  '<div class="charts-row"><div class="chart-card"><h3>📊 Phân bổ chi tiêu</h3><div class="chart-container"><canvas id="chPie"></canvas></div></div><div class="chart-card"><h3>📈 Chi tiêu theo ngày</h3><div class="chart-container"><canvas id="chDaily"></canvas></div></div></div>'+
+  '<div class="ai-insight"><div class="ai-insight-icon">📊</div><div class="ai-insight-text"><strong>AI:</strong> Chi tiêu ăn uống chiếm '+(catMap['🍜 Ăn uống']?Math.round((catMap['🍜 Ăn uống']/exp)*100):0)+'%. Gợi ý: Meal prep tiết kiệm ~800K/tháng!</div></div>'+
+  '<div class="data-list"><div class="data-list-header"><h3>📋 Lịch sử giao dịch</h3></div>'+allTx.slice(0,20).map(t=>'<div class="data-list-item"><span style="font-size:1.2rem">'+t.category.split(' ')[0]+'</span><div class="item-info"><div>'+(t.note||t.category)+'</div><div class="item-date">'+t.date+'</div></div><span class="item-amount '+t.type+'">'+(t.type==='income'?'+':'-')+formatMoney(t.amount)+'</span><span class="item-delete" onclick="deleteTx('+t.id+')"><i class="fas fa-trash"></i></span></div>').join('')+'</div>';
+  setTimeout(()=>{
+    const p=document.getElementById('chPie');if(p&&Object.keys(catMap).length){const cl=['#6C63FF','#00D4AA','#FF6B6B','#FFB84D','#4ADE80','#8B5CF6','#EC4899'];APP.charts.pie=new Chart(p,{type:'doughnut',data:{labels:Object.keys(catMap),datasets:[{data:Object.values(catMap).map(v=>v/1000),backgroundColor:cl.slice(0,Object.keys(catMap).length),borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:getChartColor(),font:{size:11}}}}}})}
+    const d=document.getElementById('chDaily');if(d){const lb=[],dt=[];for(let i=13;i>=0;i--){const dd=new Date();dd.setDate(dd.getDate()-i);lb.push(dd.getDate()+'');dt.push(window.DATA.finance.transactions.filter(t=>t.date===dd.toISOString().split('T')[0]&&t.type==='expense').reduce((s,t)=>s+t.amount,0)/1000)}APP.charts.daily=new Chart(d,{type:'bar',data:{labels:lb,datasets:[{data:dt,backgroundColor:'rgba(255,107,107,0.6)',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:getChartColor()}},x:{ticks:{color:getChartColor()},grid:{display:false}}}}})}
+  },100);
+}
+function setTransType(type){APP.transactionType=type;const e=document.getElementById('transTypeExpense'),i=document.getElementById('transTypeIncome');if(type==='expense'){e.style.background='var(--accent)';e.style.color='#fff';e.className='btn btn-sm';i.style.background='';i.style.color='';i.className='btn btn-sm btn-outline'}else{i.style.background='var(--success)';i.style.color='#fff';i.className='btn btn-sm';e.style.background='';e.style.color='';e.className='btn btn-sm btn-outline'}}
+function addTransaction(){const a=parseInt(document.getElementById('transAmount').value);if(!a||a<=0){showToast('Nhập số tiền hợp lệ','warning');return}window.DATA.finance.transactions.push({id:Date.now(),amount:a,category:document.getElementById('transCategory').value,note:document.getElementById('transNote').value,type:APP.transactionType,date:document.getElementById('transDate').value||getToday()});saveData();closeModal('transModal');showToast('Đã thêm '+(APP.transactionType==='income'?'thu nhập':'chi tiêu')+' '+formatMoney(a),'success');addXP(5);document.getElementById('transAmount').value='';document.getElementById('transNote').value='';if(APP.currentPage==='finance')renderFinance();else if(APP.currentPage==='dashboard')renderDashboard()}
+function deleteTx(id){window.DATA.finance.transactions=window.DATA.finance.transactions.filter(t=>t.id!==id);saveData();showToast('Đã xóa giao dịch','info');renderFinance()}
+
+// ===== MIND with calendar like image =====
+function renderMind(){
+  const area=document.getElementById('contentArea'),todayMood=window.DATA.mood.entries.find(e=>e.date===getToday());
+  const todayGrat=window.DATA.mood.gratitude.find(g=>g.date===getToday());
+  const recent=window.DATA.mood.entries.slice(-3),isWarning=recent.length>=3&&recent.every(e=>e.mood<=2);
+  const calHTML=buildMoodCalendar(APP.calYear,APP.calMonth);
+  // Diary entries - last 7 days
+  const diaryHTML=window.DATA.mood.entries.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10).map(e=>'<div class="diary-entry"><div style="display:flex;justify-content:space-between;align-items:center"><span class="diary-date">'+e.date+'</span><span class="diary-mood">'+getMoodEmoji(e.mood)+' '+getMoodLabel(e.mood)+'</span></div>'+(e.note?'<div class="diary-note">'+e.note+'</div>':'')+(e.tags&&e.tags.length?'<div class="diary-tags">'+e.tags.map(t=>'<span>#'+t+'</span>').join('')+'</div>':'')+'</div>').join('');
+
+  area.innerHTML='<div class="page-header"><h1><i class="fas fa-brain" style="color:var(--secondary)"></i> Sức khỏe Tinh thần</h1></div>'+
+  (isWarning?'<div style="background:rgba(255,107,107,0.1);border:2px solid var(--accent);border-radius:var(--radius);padding:20px;margin-bottom:24px;display:flex;gap:12px"><i class="fas fa-exclamation-triangle" style="color:var(--accent);font-size:1.4rem;margin-top:4px"></i><div><strong style="color:var(--accent)">Bạn không vui mấy ngày qua</strong><p style="font-size:0.9rem;color:var(--text2);margin-top:4px">Đường dây nóng: <strong>1800 599 920</strong> (miễn phí, 24/7)</p></div></div>':'')+
+  '<div class="card" style="text-align:center;margin-bottom:24px"><h3>Hôm nay bạn cảm thấy thế nào?</h3><div class="mood-selector">'+[1,2,3,4,5].map(m=>'<div class="mood-btn '+(todayMood&&todayMood.mood===m?'selected':'')+'" onclick="saveMood('+m+')">'+getMoodEmoji(m)+'</div>').join('')+'</div><p style="font-size:0.85rem;color:var(--text3)">😢 Rất buồn — 😟 Buồn — 😐 Bình thường — 😊 Vui — 🤩 Rất vui</p><textarea class="input-field" id="moodNote" placeholder="Chia sẻ thêm..." style="margin-top:12px;max-width:500px;margin-left:auto;margin-right:auto">'+(todayMood?todayMood.note||'':'')+'</textarea><div class="tag-list" style="justify-content:center;margin-top:8px">'+['công_việc','gia_đình','bạn_bè','sức_khỏe','tài_chính','học_tập'].map(tag=>'<span class="tag '+(todayMood&&todayMood.tags&&todayMood.tags.includes(tag)?'active':'')+'" onclick="this.classList.toggle(\'active\')">#'+tag+'</span>').join('')+'</div></div>'+
+  '<div class="charts-row"><div class="chart-card"><h3>📅 Lịch tâm trạng</h3>'+calHTML+'</div><div class="chart-card"><h3>📈 Biểu đồ 30 ngày</h3><div class="chart-container"><canvas id="chMood30"></canvas></div></div></div>'+
+  '<div class="card" style="margin-bottom:24px"><h3 style="margin-bottom:16px"><i class="fas fa-lungs"></i> Bài tập thở</h3><div class="breathing-container"><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn btn-sm btn-primary" onclick="startBreathing(\'calm\')">😌 Calm (4-7-8)</button><button class="btn btn-sm btn-outline" onclick="startBreathing(\'focus\')">🎯 Focus (4-4-4)</button><button class="btn btn-sm btn-outline" onclick="stopBreathing()"><i class="fas fa-stop"></i> Dừng</button></div><div class="breathing-circle" id="breathCircle"><span id="breathText">Bắt đầu</span></div><p id="breathInstruction" style="color:var(--text2);font-size:0.9rem">Chọn chế độ thở để bắt đầu</p></div></div>'+
+  '<div class="card" style="margin-bottom:24px"><h3 style="margin-bottom:16px">🙏 3 điều biết ơn</h3><div style="display:flex;flex-direction:column;gap:10px"><input class="input-field" id="grat1" placeholder="1. Tôi biết ơn vì..." value="'+(todayGrat&&todayGrat.items[0]?todayGrat.items[0]:'')+'" onchange="saveGratitude()"><input class="input-field" id="grat2" placeholder="2. Tôi biết ơn vì..." value="'+(todayGrat&&todayGrat.items[1]?todayGrat.items[1]:'')+'" onchange="saveGratitude()"><input class="input-field" id="grat3" placeholder="3. Tôi biết ơn vì..." value="'+(todayGrat&&todayGrat.items[2]?todayGrat.items[2]:'')+'" onchange="saveGratitude()"></div></div>'+
+  '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h3>📔 Nhật ký tâm trạng</h3></div>'+diaryHTML+'</div>';
+  setTimeout(()=>{const c=document.getElementById('chMood30');if(!c)return;const lb=[],dt=[];for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);lb.push(d.getDate()+'');const e=window.DATA.mood.entries.find(x=>x.date===d.toISOString().split('T')[0]);dt.push(e?e.mood:null)}APP.charts.m30=new Chart(c,{type:'line',data:{labels:lb,datasets:[{data:dt,borderColor:'#00D4AA',backgroundColor:'rgba(0,212,170,0.1)',fill:true,tension:0.4,pointRadius:3,spanGaps:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:5,ticks:{stepSize:1,color:getChartColor(),callback:v=>['','😢','😟','😐','😊','🤩'][v]||''}},x:{ticks:{color:getChartColor(),maxTicksLimit:10},grid:{display:false}}}}})},100);
+}
+
+// Calendar builder matching the image style
+function buildMoodCalendar(year,month){
+  const monthNames=['Tháng 01','Tháng 02','Tháng 03','Tháng 04','Tháng 05','Tháng 06','Tháng 07','Tháng 08','Tháng 09','Tháng 10','Tháng 11','Tháng 12'];
+  const firstDay=new Date(year,month,1).getDay();// 0=CN
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const today=getToday();
+  let html='<div class="mood-calendar-wrapper">';
+  html+='<div class="mood-cal-header"><button onclick="changeCalMonth(-1)"><i class="fas fa-chevron-left"></i></button><span>'+monthNames[month]+' — '+year+'</span><button onclick="changeCalMonth(1)"><i class="fas fa-chevron-right"></i></button></div>';
+  html+='<div class="mood-cal-grid">';
+  ['Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy','Chủ nhật'].forEach((d,i)=>{html+='<div class="mood-cal-dayname'+(i===6?' sunday':'')+'">'+d.substring(0,2)+'</div>'});
+  // Adjust: JS getDay() 0=Sun, we want Mon=0
+  let startDay=(firstDay+6)%7;
+  for(let i=0;i<startDay;i++)html+='<div class="mood-cal-cell empty"></div>';
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const entry=window.DATA.mood.entries.find(e=>e.date===ds);
+    const isToday=ds===today;
+    const dayOfWeek=(startDay+d-1)%7;
+    const isSunday=dayOfWeek===6;
+    html+='<div class="mood-cal-cell'+(isToday?' today':'')+(entry?' has-mood':'')+(isSunday?' sunday':'')+'" onclick="viewDayMood(\''+ds+'\')" title="'+(entry?getMoodLabel(entry.mood):'')+'">';
+    html+='<span class="cal-date">'+String(d).padStart(2,'0')+'</span>';
+    if(entry)html+='<span class="cal-emoji">'+getMoodEmoji(entry.mood)+'</span>';
+    html+='</div>';
+  }
+  html+='</div></div>';
+  return html;
+}
+function changeCalMonth(dir){APP.calMonth+=dir;if(APP.calMonth>11){APP.calMonth=0;APP.calYear++}if(APP.calMonth<0){APP.calMonth=11;APP.calYear--}renderMind()}
+function viewDayMood(date){const entry=window.DATA.mood.entries.find(e=>e.date===date);if(entry){showToast(date+': '+getMoodEmoji(entry.mood)+' '+getMoodLabel(entry.mood)+(entry.note?' — '+entry.note:''),'info')}else{showToast(date+': Chưa có ghi chép','info')}}
+
+function saveMood(level){
+  const today=getToday(),note=document.getElementById('moodNote')?document.getElementById('moodNote').value:'';
+  const tags=[...document.querySelectorAll('.tag.active')].map(t=>t.textContent.replace('#',''));
+  let entry=window.DATA.mood.entries.find(e=>e.date===today);
+  if(entry){entry.mood=level;entry.note=note;entry.tags=tags}else{window.DATA.mood.entries.push({date:today,mood:level,note:note,tags:tags})}
+  saveData();showToast(getMoodEmoji(level)+' Đã ghi tâm trạng!','success');addXP(5);
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  if(event&&event.target){const btn=event.target.closest('.mood-btn');if(btn)btn.classList.add('selected')}
+}
+function saveGratitude(){const items=[document.getElementById('grat1').value,document.getElementById('grat2').value,document.getElementById('grat3').value].filter(Boolean);const today=getToday();let e=window.DATA.mood.gratitude.find(g=>g.date===today);if(e)e.items=items;else window.DATA.mood.gratitude.push({date:today,items:items});saveData()}
+function startBreathing(mode){stopBreathing();const circle=document.getElementById('breathCircle'),text=document.getElementById('breathText'),instr=document.getElementById('breathInstruction');const p={calm:{inhale:4,hold:7,exhale:8},focus:{inhale:4,hold:4,exhale:4}}[mode];let phase='inhale';function tick(){if(phase==='inhale'){circle.className='breathing-circle inhale';circle.style.transitionDuration=p.inhale+'s';text.textContent='Hít vào';instr.textContent='Hít vào... '+p.inhale+'s';APP.breathingTimer=setTimeout(()=>{phase='hold';tick()},p.inhale*1000)}else if(phase==='hold'){circle.className='breathing-circle hold';text.textContent='Giữ';instr.textContent='Giữ hơi... '+p.hold+'s';APP.breathingTimer=setTimeout(()=>{phase='exhale';tick()},p.hold*1000)}else{circle.className='breathing-circle exhale';circle.style.transitionDuration=p.exhale+'s';text.textContent='Thở ra';instr.textContent='Thở ra... '+p.exhale+'s';APP.breathingTimer=setTimeout(()=>{phase='inhale';tick()},p.exhale*1000)}}tick()}
+function stopBreathing(){clearTimeout(APP.breathingTimer);const c=document.getElementById('breathCircle');if(c){c.className='breathing-circle';c.style.transitionDuration='0.5s';document.getElementById('breathText').textContent='Bắt đầu';document.getElementById('breathInstruction').textContent='Chọn chế độ thở để bắt đầu'}}
+
+// ===== STUDY - only Pomodoro =====
+function renderStudy(){
+  const area=document.getElementById('contentArea');
+  const m=Math.floor(APP.pomodoroTime/60),s=APP.pomodoroTime%60;
+  const display=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  const circ=2*Math.PI*100,prog=1-(APP.pomodoroTime/(25*60)),off=circ*(1-prog);
+  area.innerHTML='<div class="page-header"><h1><i class="fas fa-book" style="color:var(--primary)"></i> Học tập</h1></div>'+
+  '<div class="card"><h3 style="margin-bottom:16px">🍅 Pomodoro Timer</h3><div class="pomodoro-container"><div class="pomodoro-circle"><svg viewBox="0 0 220 220"><circle class="bg-ring" cx="110" cy="110" r="100"/><circle class="progress-ring" cx="110" cy="110" r="100" stroke-dasharray="'+circ+'" stroke-dashoffset="'+off+'" id="pomRing"/></svg><div class="pomodoro-time"><span class="time" id="pomDisplay">'+display+'</span><span class="label" id="pomLabel">'+(APP.pomodoroRunning?'Đang tập trung...':'Sẵn sàng')+'</span></div></div><div style="display:flex;gap:12px;justify-content:center;margin-top:16px"><button class="btn btn-primary btn-sm" id="pomBtn" onclick="togglePomodoro()">'+(APP.pomodoroRunning?'<i class="fas fa-pause"></i> Tạm dừng':'<i class="fas fa-play"></i> Bắt đầu')+'</button><button class="btn btn-outline btn-sm" onclick="resetPomodoro()"><i class="fas fa-redo"></i> Reset</button></div><div style="margin-top:12px;font-size:1.2rem" id="pomSess">🍅 x '+APP.pomodoroSession+'</div></div></div>'+
+  '<div class="ai-insight" style="margin-top:24px"><div class="ai-insight-icon">💡</div><div class="ai-insight-text"><strong>AI Study:</strong> Bạn đã hoàn thành '+APP.pomodoroSession+' phiên Pomodoro. Gợi ý: Học xen kẽ các môn, nghỉ 5 phút giữa mỗi phiên!</div></div>';
+}
+function togglePomodoro(){if(APP.pomodoroRunning){clearInterval(APP.pomodoroTimer);APP.pomodoroRunning=false}else{APP.pomodoroRunning=true;APP.pomodoroTimer=setInterval(()=>{APP.pomodoroTime--;if(APP.pomodoroTime<=0){clearInterval(APP.pomodoroTimer);APP.pomodoroRunning=false;APP.pomodoroSession++;APP.pomodoroTime=25*60;addXP(15);showToast('🍅 Pomodoro hoàn thành!','success')}updatePomDisplay()},1000)}updatePomDisplay()}
+function resetPomodoro(){clearInterval(APP.pomodoroTimer);APP.pomodoroRunning=false;APP.pomodoroTime=25*60;updatePomDisplay()}
+function updatePomDisplay(){const d=document.getElementById('pomDisplay'),l=document.getElementById('pomLabel'),b=document.getElementById('pomBtn'),r=document.getElementById('pomRing'),ss=document.getElementById('pomSess');if(!d)return;const m=Math.floor(APP.pomodoroTime/60),s=APP.pomodoroTime%60;d.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');l.textContent=APP.pomodoroRunning?'Đang tập trung...':'Sẵn sàng';b.innerHTML=APP.pomodoroRunning?'<i class="fas fa-pause"></i> Tạm dừng':'<i class="fas fa-play"></i> Bắt đầu';ss.textContent='🍅 x '+APP.pomodoroSession;const circ=2*Math.PI*100;r.style.strokeDashoffset=circ*(1-(1-(APP.pomodoroTime/(25*60))))}
+
+// ===== HEALTH - BMI + AI recommendations =====
+function renderHealth(){
+  const area=document.getElementById('contentArea');
+  const bmi=window.DATA.health.bmi;
+  const bmiVal=bmi.height&&bmi.weight?(bmi.weight/((bmi.height/100)**2)).toFixed(1):null;
+  let bmiStatus='',bmiColor='var(--text3)',aiRec='';
+  if(bmiVal){
+    if(bmiVal<18.5){bmiStatus='Thiếu cân';bmiColor='var(--warning)';aiRec='<strong>AI đề xuất cải thiện:</strong><br>• 🍖 Tăng lượng calories nạp vào mỗi ngày (+300-500 cal)<br>• 🥚 Ăn nhiều protein: trứng, thịt gà, cá, đậu<br>• 💪 Tập gym với tạ nặng để tăng cơ bắp<br>• 🥜 Ăn snack lành mạnh: hạt, bơ đậu phộng, sữa chua<br>• 😴 Ngủ đủ 7-8 tiếng mỗi đêm<br>• 🍌 Ăn 5-6 bữa nhỏ thay vì 3 bữa lớn'}
+    else if(bmiVal<25){bmiStatus='Bình thường ✅';bmiColor='var(--success)';aiRec='<strong>AI đề xuất duy trì:</strong><br>• 🏃 Duy trì tập thể dục 30 phút/ngày<br>• 🥗 Ăn đa dạng các nhóm thực phẩm<br>• 💧 Uống đủ 2L nước mỗi ngày<br>• 😴 Ngủ đúng giờ, đủ giấc<br>• 🧘 Giảm stress bằng thiền hoặc yoga<br>• 📊 Theo dõi cân nặng định kỳ mỗi tuần'}
+    else if(bmiVal<30){bmiStatus='Thừa cân';bmiColor='var(--warning)';aiRec='<strong>AI đề xuất giảm cân:</strong><br>• 🍽️ Giảm 300-500 cal/ngày so với mức hiện tại<br>• 🏃 Cardio 30-45 phút, 5 lần/tuần (đi bộ nhanh, chạy, bơi)<br>• 🥦 Tăng rau xanh, giảm tinh bột trắng<br>• 🚫 Hạn chế đồ chiên, đường, nước ngọt<br>• 💧 Uống nước trước bữa ăn 30 phút<br>• 📝 Ghi chép thực đơn hàng ngày<br>• ⏰ Không ăn sau 8 PM'}
+    else{bmiStatus='Béo phì';bmiColor='var(--accent)';aiRec='<strong>AI đề xuất cấp thiết:</strong><br>• 🏥 Nên tham khảo ý kiến bác sĩ/chuyên gia dinh dưỡng<br>• 🍽️ Giảm 500-750 cal/ngày<br>• 🚶 Bắt đầu từ đi bộ 15p/ngày, tăng dần<br>• 🥗 Ăn nhiều rau, protein nạc, giảm carb<br>• 🚫 Loại bỏ đồ ăn nhanh, đồ uống có đường<br>• 📋 Lập kế hoạch bữa ăn hàng tuần<br>• 🧠 Chú ý sức khỏe tinh thần, tránh stress ăn'}
+  }
+  area.innerHTML='<div class="page-header"><h1><i class="fas fa-heartbeat" style="color:var(--accent)"></i> Sức khỏe</h1></div>'+
+  '<div class="card" style="margin-bottom:24px"><h3 style="margin-bottom:16px">⚖️ BMI Calculator</h3><div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px"><div style="flex:1;min-width:150px"><label style="font-size:0.85rem;color:var(--text3);display:block;margin-bottom:4px">Chiều cao (cm)</label><input class="input-field" type="number" id="bmiH" value="'+(bmi.height||'')+'" placeholder="170" onchange="calcBMI()"></div><div style="flex:1;min-width:150px"><label style="font-size:0.85rem;color:var(--text3);display:block;margin-bottom:4px">Cân nặng (kg)</label><input class="input-field" type="number" id="bmiW" value="'+(bmi.weight||'')+'" placeholder="65" onchange="calcBMI()"></div></div>'+
+  (bmiVal?'<div style="text-align:center;padding:20px;background:var(--bg);border-radius:var(--radius-sm)"><div style="font-size:3rem;font-weight:800;color:'+bmiColor+'">'+bmiVal+'</div><div style="font-size:1.1rem;color:var(--text2);margin-top:4px">'+bmiStatus+'</div><div style="margin-top:12px;height:12px;background:var(--bg3);border-radius:6px;overflow:hidden;position:relative"><div style="position:absolute;left:0;height:100%;width:'+Math.min(bmiVal/40*100,100)+'%;background:linear-gradient(90deg,var(--success),var(--warning),var(--accent));border-radius:6px"></div></div><div style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--text3);margin-top:4px"><span>Thiếu cân<br>&lt;18.5</span><span>Bình thường<br>18.5-24.9</span><span>Thừa cân<br>25-29.9</span><span>Béo phì<br>&gt;30</span></div></div>':'<p style="text-align:center;color:var(--text3);padding:20px">Nhập thông tin để tính BMI</p>')+
+  '</div>'+
+  (aiRec?'<div class="ai-insight"><div class="ai-insight-icon">🤖</div><div class="ai-insight-text">'+aiRec+'</div></div>':'')+
+  '<div class="card"><h3 style="margin-bottom:16px">💬 Hỏi AI về sức khỏe</h3><div style="display:flex;gap:8px"><input class="input-field" id="healthQ" placeholder="VD: Tôi nên ăn gì để tăng cơ?..." onkeypress="if(event.key===\'Enter\')askHealthAI()"><button class="btn btn-primary btn-sm" onclick="askHealthAI()"><i class="fas fa-paper-plane"></i></button></div><div id="healthAIAnswer" style="margin-top:12px"></div></div>';
+}
+function calcBMI(){const h=parseFloat(document.getElementById('bmiH').value),w=parseFloat(document.getElementById('bmiW').value);if(h&&w){window.DATA.health.bmi={height:h,weight:w};saveData();renderHealth()}}
+function askHealthAI(){
+  const q=document.getElementById('healthQ').value.trim();if(!q)return;
+  const bmi=window.DATA.health.bmi,bmiVal=bmi.height&&bmi.weight?(bmi.weight/((bmi.height/100)**2)).toFixed(1):null;
+  const m=q.toLowerCase();let ans='';
+  if(m.includes('tăng cơ')||m.includes('gym')||m.includes('cơ bắp'))ans='💪 <strong>Để tăng cơ:</strong><br>• Tập tạ 3-4 lần/tuần, tập trung compound exercises<br>• Ăn 1.6-2g protein/kg cân nặng/ngày<br>• Ngủ đủ 7-8h để phục hồi<br>• Bổ sung: trứng, ức gà, cá hồi, whey protein';
+  else if(m.includes('giảm cân')||m.includes('mỡ'))ans='🏃 <strong>Để giảm cân:</strong><br>• Thâm hụt 300-500 cal/ngày<br>• Cardio 30-45p, 4-5 lần/tuần<br>• Ăn nhiều rau, protein, ít tinh bột<br>• Không ăn sau 8 PM, uống nhiều nước';
+  else if(m.includes('ăn')||m.includes('dinh dưỡng')||m.includes('thực đơn'))ans='🥗 <strong>Gợi ý dinh dưỡng:</strong><br>• Sáng: Yến mạch + trứng + trái cây<br>• Trưa: Cơm gạo lứt + ức gà + rau<br>• Tối: Cá hồi + salad + khoai lang<br>• Snack: Hạt, sữa chua, chuối';
+  else if(m.includes('ngủ')||m.includes('giấc ngủ'))ans='😴 <strong>Cải thiện giấc ngủ:</strong><br>• Ngủ/dậy cùng giờ mỗi ngày<br>• Tắt màn hình 30p trước khi ngủ<br>• Phòng tối, mát (18-22°C)<br>• Không cafe sau 2 PM';
+  else ans='🤖 Dựa trên BMI '+(bmiVal||'chưa có')+' của bạn: Hãy duy trì lối sống lành mạnh với chế độ ăn cân bằng, tập thể dục đều đặn 30p/ngày, ngủ đủ giấc và uống đủ nước. Bạn có thể hỏi cụ thể hơn về tăng cơ, giảm cân, dinh dưỡng, giấc ngủ!';
+  document.getElementById('healthAIAnswer').innerHTML='<div class="ai-insight" style="margin:0"><div class="ai-insight-icon">🤖</div><div class="ai-insight-text">'+ans+'</div></div>';
+  document.getElementById('healthQ').value='';
+}
+
+// ===== PRODUCTIVITY with add/delete habit =====
+function renderProductivity(){
+  const area=document.getElementById('contentArea'),tasks=window.DATA.productivity.tasks,habits=window.DATA.productivity.habits;
+  const inc=tasks.filter(t=>!t.completed);
+  const q1=inc.filter(t=>t.priority==='high'&&t.deadline<=getToday()),q2=inc.filter(t=>t.priority==='high'&&t.deadline>getToday()),q3=inc.filter(t=>t.priority==='medium'),q4=inc.filter(t=>t.priority==='low');
+  area.innerHTML='<div class="page-header"><h1><i class="fas fa-tasks" style="color:var(--warning)"></i> Năng suất</h1><button class="btn btn-primary btn-sm" onclick="openModal(\'taskModal\')"><i class="fas fa-plus"></i> Thêm task</button></div>'+
+  '<div class="card" style="margin-bottom:24px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px"><h3>📋 Công việc</h3><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-sm btn-primary" onclick="filterTasks(\'all\',this)">Tất cả</button><button class="btn btn-sm btn-outline" onclick="filterTasks(\'today\',this)">Hôm nay</button><button class="btn btn-sm btn-outline" onclick="filterTasks(\'completed\',this)">Hoàn thành</button></div></div><div id="taskList">'+tasks.slice(0,15).map(t=>taskHTML(t)).join('')+'</div></div>'+
+  '<div class="card" style="margin-bottom:24px"><h3 style="margin-bottom:16px">📊 Ma trận Eisenhower</h3><div class="eisenhower-grid"><div class="eisenhower-quadrant" style="border-top:3px solid var(--accent)"><h4>🔴 Làm ngay</h4>'+q1.map(t=>'<div class="q-task">• '+t.name+'</div>').join('')+'</div><div class="eisenhower-quadrant" style="border-top:3px solid var(--warning)"><h4>🟡 Lên lịch</h4>'+q2.map(t=>'<div class="q-task">• '+t.name+'</div>').join('')+'</div><div class="eisenhower-quadrant" style="border-top:3px solid #F97316"><h4>🟠 Ủy quyền</h4>'+q3.map(t=>'<div class="q-task">• '+t.name+'</div>').join('')+'</div><div class="eisenhower-quadrant" style="border-top:3px solid var(--success)"><h4>🟢 Có thể bỏ</h4>'+q4.map(t=>'<div class="q-task">• '+t.name+'</div>').join('')+'</div></div></div>'+
+  '<div class="card" style="margin-bottom:24px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h3>🔥 Thói quen</h3><button class="btn btn-sm btn-primary" onclick="openModal(\'habitModal\')"><i class="fas fa-plus"></i> Thêm</button></div>'+habits.map(h=>'<div class="habit-item"><span style="font-size:1.3rem">'+h.icon+'</span><span class="habit-name">'+h.name+'</span><span class="habit-streak">🔥 '+h.streak+' ngày</span><div class="habit-check '+(h.history[0]?'done':'')+'" onclick="toggleHabit('+h.id+')">'+(h.history[0]?'<i class="fas fa-check"></i>':'')+'</div><span class="habit-delete" onclick="deleteHabit('+h.id+')"><i class="fas fa-trash"></i></span></div>').join('')+
+  '<h4 style="margin-top:20px;margin-bottom:8px;font-size:0.9rem;color:var(--text2)">📊 Heatmap 30 ngày</h4><div class="heatmap">'+(habits[0]?habits[0].history.slice(0,28).map(h=>'<div class="heatmap-cell '+(h?'l'+Math.ceil(Math.random()*4):'')+'"></div>').join(''):'')+
+  '</div></div>';
+}
+function taskHTML(t){return '<div class="task-item '+(t.completed?'completed':'')+'"><div class="task-checkbox '+(t.completed?'checked':'')+'" onclick="toggleTask('+t.id+')">'+(t.completed?'<i class="fas fa-check"></i>':'')+'</div><span class="task-priority '+t.priority+'"></span><span class="task-text">'+t.name+'</span><span class="task-deadline">'+t.deadline+'</span><span class="item-delete" onclick="deleteTask('+t.id+')" style="cursor:pointer;opacity:0.5"><i class="fas fa-trash"></i></span></div>'}
+function filterTasks(f,btn){if(btn){btn.parentElement.querySelectorAll('.btn').forEach(b=>b.className='btn btn-sm btn-outline');btn.className='btn btn-sm btn-primary'}const tasks=window.DATA.productivity.tasks;let fl;switch(f){case'today':fl=tasks.filter(t=>t.deadline===getToday());break;case'completed':fl=tasks.filter(t=>t.completed);break;default:fl=tasks}document.getElementById('taskList').innerHTML=fl.map(t=>taskHTML(t)).join('')||'<p style="text-align:center;color:var(--text3);padding:20px">Không c�� task</p>'}
+function addTask(){const n=document.getElementById('taskName').value.trim();if(!n){showToast('Nhập tên task','warning');return}window.DATA.productivity.tasks.push({id:Date.now(),name:n,priority:document.getElementById('taskPriority').value,deadline:document.getElementById('taskDeadline').value||getToday(),completed:false});saveData();closeModal('taskModal');showToast('Đã thêm task!','success');document.getElementById('taskName').value='';if(APP.currentPage==='productivity')renderProductivity()}
+function toggleTask(id){const t=window.DATA.productivity.tasks.find(x=>x.id===id);if(t){t.completed=!t.completed;saveData();if(t.completed){addXP(10);showToast('Task hoàn thành! +10 XP','success')}if(APP.currentPage==='productivity')renderProductivity()}}
+function deleteTask(id){window.DATA.productivity.tasks=window.DATA.productivity.tasks.filter(t=>t.id!==id);saveData();renderProductivity()}
+function toggleHabit(id){const h=window.DATA.productivity.habits.find(x=>x.id===id);if(h){h.history[0]=h.history[0]?0:1;if(h.history[0]){h.streak++;addXP(8);showToast('🔥 '+h.name+' — Streak '+h.streak+'!','success')}else h.streak=Math.max(0,h.streak-1);saveData();renderProductivity()}}
+function addHabit(){
+  const n=document.getElementById('habitName').value.trim();if(!n){showToast('Nhập tên thói quen','warning');return}
+  const activeIcon=document.querySelector('#habitIconPicker .emoji-option.active');
+  const icon=activeIcon?activeIcon.dataset.icon:'🏃';
+  window.DATA.productivity.habits.push({id:Date.now(),name:n,icon:icon,streak:0,history:Array(30).fill(0)});
+  saveData();closeModal('habitModal');showToast('Đã thêm thói quen!','success');
+  document.getElementById('habitName').value='';
+  if(APP.currentPage==='productivity')renderProductivity();
+}
+function deleteHabit(id){if(confirm('Xóa thói quen này?')){window.DATA.productivity.habits=window.DATA.productivity.habits.filter(h=>h.id!==id);saveData();renderProductivity();showToast('Đã xóa thói quen','info')}}
+
+// Habit icon picker
+document.addEventListener('click',function(e){
+  if(e.target.closest('#habitIconPicker .emoji-option')){
+    document.querySelectorAll('#habitIconPicker .emoji-option').forEach(x=>x.classList.remove('active'));
+    e.target.closest('.emoji-option').classList.add('active');
+  }
+});
+
+// ===== ASSISTANT =====
+function renderAssistant(){
+  const area=document.getElementById('contentArea'),msgs=window.DATA.chat.messages;
+  area.innerHTML='<div style="display:flex;flex-direction:column;height:calc(100vh - var(--topbar-h) - 56px)"><div class="page-header" style="margin-bottom:8px;flex-shrink:0"><h1><i class="fas fa-robot" style="color:var(--primary)"></i> Trợ lý AI</h1></div>'+
+  '<div class="quick-prompts" style="flex-shrink:0;margin-bottom:8px"><span class="quick-prompt" onclick="aiPrompt(\'Tóm tắt ngày hôm nay\')">📊 Tóm tắt ngày</span><span class="quick-prompt" onclick="aiPrompt(\'Phân tích chi tiêu\')">💰 Chi tiêu</span><span class="quick-prompt" onclick="aiPrompt(\'Tips năng suất\')">⚡ Năng suất</span><span class="quick-prompt" onclick="aiPrompt(\'Tâm trạng\')">🧠 Tâm trạng</span><span class="quick-prompt" onclick="aiPrompt(\'Kế hoạch ngày mai\')">📋 Kế hoạch</span></div>'+
+  '<div id="chatMsgs" style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px">'+msgs.map(m=>'<div class="chat-bubble '+m.role+'">'+(m.role==='ai'?'<div class="bubble-name">🤖 LifeSync AI</div>':'')+m.text+'</div>').join('')+'</div>'+
+  '<div class="chat-input-area" style="flex-shrink:0"><input type="text" id="aiInput" placeholder="Hỏi AI..." onkeypress="if(event.key===\'Enter\')sendAI()"><button class="btn btn-primary btn-sm" onclick="sendAI()"><i class="fas fa-paper-plane"></i></button></div></div>';
+  setTimeout(()=>{const c=document.getElementById('chatMsgs');if(c)c.scrollTop=c.scrollHeight},100);
+}
+function aiPrompt(t){document.getElementById('aiInput').value=t;sendAI()}
+function sendAI(){
+  const inp=document.getElementById('aiInput'),msg=inp.value.trim();if(!msg)return;
+  window.DATA.chat.messages.push({role:'user',text:msg,time:Date.now()});inp.value='';
+  const ch=document.getElementById('chatMsgs');ch.innerHTML+='<div class="chat-bubble user">'+msg+'</div><div class="typing-indicator" id="aiTy"><span></span><span></span><span></span></div>';ch.scrollTop=ch.scrollHeight;
+  setTimeout(()=>{const ty=document.getElementById('aiTy');if(ty)ty.remove();const r=aiResponse(msg);window.DATA.chat.messages.push({role:'ai',text:r,time:Date.now()});saveData();ch.innerHTML+='<div class="chat-bubble ai"><div class="bubble-name">🤖 LifeSync AI</div>'+r+'</div>';ch.scrollTop=ch.scrollHeight},1200+Math.random()*1000);
+}
+function aiResponse(msg){
+  const m=msg.toLowerCase(),today=getToday();
+  const todayExp=window.DATA.finance.transactions.filter(t=>t.date===today&&t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const todayMood=window.DATA.mood.entries.find(e=>e.date===today);
+  const tasks=window.DATA.productivity.tasks,done=tasks.filter(t=>t.completed).length;
+  const mt=getMonthTransactions(),mExp=mt.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0),mInc=mt.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  if(m.includes('tóm tắt')||m.includes('hôm nay'))return '<strong>📊 Tóm tắt ngày:</strong><br><br>💰 Chi tiêu: '+formatMoney(todayExp)+'<br>🧠 Tâm trạng: '+(todayMood?getMoodEmoji(todayMood.mood)+' '+getMoodLabel(todayMood.mood):'Chưa ghi')+'<br>✅ Tasks: '+done+'/'+tasks.length+'<br>🍅 Pomodoro: '+APP.pomodoroSession+' phiên<br><br>Tiếp tục phát huy! 💪';
+  if(m.includes('chi tiêu')||m.includes('tài chính'))return '<strong>💰 Tháng này:</strong><br>📥 Thu: '+formatMoney(mInc)+'<br>📤 Chi: '+formatMoney(mExp)+'<br>💵 Còn: '+formatMoney(mInc-mExp)+'<br><br>💡 Meal prep tiết kiệm ~800K/tháng!';
+  if(m.includes('năng suất'))return '<strong>⚡ Tips:</strong><br>• Làm việc khó nhất đầu ngày<br>• Tắt thông báo khi Pomodoro<br>• Nghỉ 5p mỗi 25p<br>• Review 3 điều tốt cuối ngày';
+  if(m.includes('tâm trạng'))return '<strong>🧠 Phân tích:</strong><br>'+(todayMood?'Hôm nay: '+getMoodEmoji(todayMood.mood):'Chưa ghi mood')+'<br><br>💡 Thở 4-7-8, viết 3 điều biết ơn, đi bộ 15p!';
+  if(m.includes('kế hoạch'))return '<strong>📋 Kế hoạch:</strong><br>🌅 6:00 Dậy, thiền 10p<br>🏃 6:30 Tập 30p<br>🍅 8:00 Pomodoro #1-2<br>☀️ 13:00 Pomodoro #3-4<br>🌙 20:00 Ôn bài<br>😴 22:00 Ngủ';
+  if(m.includes('chào')||m.includes('hello'))return 'Chào bạn! 👋 Mình giúp được: 📊 Tóm tắt, 💰 Chi tiêu, ⚡ Năng suất, 🧠 Tâm trạng, 📋 Kế hoạch';
+  if(m.includes('cảm ơn'))return 'Không có gì! 😊 Luôn ở đây hỗ trợ bạn! 💪';
+  return 'Mình hỗ trợ: 📊 "Tóm tắt", 💰 "Chi tiêu", ⚡ "Năng suất", 🧠 "Tâm trạng", 📋 "Kế hoạch". Thử hỏi nhé! 😊';
+}
+
+// ===== SETTINGS (no import/export) =====
+function renderSettings(){
+  const area=document.getElementById('contentArea'),u=window.DATA.user;
+  const avEmojis=['😊','😎','🤓','👨‍💻','👩‍💻','🦊','🐱','🐼','🦁','🐸','🌟','🚀','💎','🎯','🔥'];
+  const colors=['#6C63FF','#00D4AA','#FF6B6B','#8B5CF6','#F59E0B','#EC4899','#14B8A6','#3B82F6'];
+  const curAv=u.avatarUrl?'<img src="'+u.avatarUrl+'" alt="av">':(u.avatar||'😊');
+  area.innerHTML='<div class="page-header"><h1><i class="fas fa-cog" style="color:var(--text2)"></i> Cài đặt</h1></div>'+
+  '<div class="settings-section"><h3><i class="fas fa-user"></i> Hồ sơ cá nhân</h3>'+
+  '<div class="form-group"><label>Tên hiển thị</label><input class="input-field" id="setName" value="'+u.name+'" onchange="updProfile()"></div>'+
+  '<div class="form-group"><label>Avatar</label><div class="avatar-upload-area"><div class="avatar-preview">'+curAv+'</div><div style="flex:1"><p style="font-size:0.85rem;color:var(--text2);margin-bottom:8px">Chọn cách đặt avatar:</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><button class="btn btn-sm btn-outline" onclick="document.getElementById(\'avFile\').click()"><i class="fas fa-upload"></i> Tải ảnh</button><button class="btn btn-sm btn-outline" onclick="toggleAvUrl()"><i class="fas fa-link"></i> Link ảnh</button><button class="btn btn-sm btn-outline" onclick="removeAv()"><i class="fas fa-trash"></i> Xóa</button></div><input type="file" id="avFile" style="display:none" accept="image/*" onchange="uploadAv(event)"><div id="avUrlSec" style="display:none;margin-top:8px"><div style="display:flex;gap:8px"><input class="input-field" id="avUrlIn" placeholder="https://..."><button class="btn btn-sm btn-primary" onclick="setAvUrl()"><i class="fas fa-check"></i></button></div></div></div></div><p style="font-size:0.8rem;color:var(--text3);margin-top:8px">Hoặc chọn emoji:</p><div class="emoji-picker">'+avEmojis.map(e=>'<div class="emoji-option '+(u.avatar===e&&!u.avatarUrl?'active':'')+'" onclick="setAvEmoji(\''+e+'\')">'+e+'</div>').join('')+'</div></div>'+
+  '<div style="margin-top:12px;padding:12px;background:var(--bg);border-radius:var(--radius-sm)"><div style="display:flex;justify-content:space-between;font-size:0.9rem"><span>Level: <strong>'+u.level+'</strong></span><span>XP: <strong>'+u.xp+'</strong></span></div><div class="xp-bar" style="margin-top:8px"><div class="xp-fill" style="width:'+Math.min((u.xp%500)/5,100)+'%"></div></div></div></div>'+
+  '<div class="settings-section"><h3><i class="fas fa-palette"></i> Giao diện</h3><div class="setting-item"><div><div class="setting-label">Chế độ tối</div><div class="setting-desc">Bật Dark Mode</div></div><div class="toggle-switch '+(APP.theme==='dark'?'active':'')+'" onclick="toggleTheme()"></div></div><div class="setting-item"><div><div class="setting-label">Màu chủ đạo</div></div><div class="color-options">'+colors.map(c=>'<div class="color-option '+(window.DATA.settings.accentColor===c?'active':'')+'" style="background:'+c+'" onclick="setColor(\''+c+'\')"></div>').join('')+'</div></div></div>'+
+  '<div class="settings-section"><h3><i class="fas fa-bell"></i> Thông báo</h3><div class="setting-item"><div><div class="setting-label">Nhắc uống nước</div></div><div class="toggle-switch active" onclick="this.classList.toggle(\'active\')"></div></div><div class="setting-item"><div><div class="setting-label">Nhắc ghi mood</div></div><div class="toggle-switch active" onclick="this.classList.toggle(\'active\')"></div></div></div>'+
+  '<div class="settings-section"><h3><i class="fas fa-info-circle"></i> Thông tin</h3><div class="setting-item"><div class="setting-label">Phiên bản</div><div style="font-size:0.9rem;color:var(--text3)">v1.0.0</div></div><div class="setting-item"><div class="setting-label">Liên hệ</div><div style="display:flex;gap:8px"><a href="mailto:nguyenducminhquang94@gmail.com" class="btn-icon" style="width:32px;height:32px;font-size:0.9rem" title="Email"><i class="fas fa-envelope"></i></a><a href="https://github.com/ndmq23629" target="_blank" class="btn-icon" style="width:32px;height:32px;font-size:0.9rem" title="GitHub"><i class="fab fa-github"></i></a><a href="https://discord.gg/EUk5c5CC" target="_blank" class="btn-icon" style="width:32px;height:32px;font-size:0.9rem" title="Discord"><i class="fab fa-discord"></i></a><a href="https://www.facebook.com/nguynqan23629/" target="_blank" class="btn-icon" style="width:32px;height:32px;font-size:0.9rem" title="Facebook"><i class="fab fa-facebook-f"></i></a><a href="https://www.youtube.com/@NDMQ236" target="_blank" class="btn-icon" style="width:32px;height:32px;font-size:0.9rem" title="YouTube"><i class="fab fa-youtube"></i></a></div></div></div>'+
+  '<div style="text-align:center;margin-top:32px"><button class="btn" style="background:var(--accent);color:#fff" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button></div>';
+}
+function updProfile(){const n=document.getElementById('setName').value.trim();if(n){window.DATA.user.name=n;saveData();updateUserUI();updateGreeting();showToast('Đã cập nhật!','success')}}
+function uploadAv(e){const f=e.target.files[0];if(!f)return;if(!f.type.startsWith('image/')){showToast('Chọn file ảnh!','error');return}if(f.size>5*1024*1024){showToast('File quá lớn! Max 5MB','error');return}const r=new FileReader();r.onload=function(ev){window.DATA.user.avatarUrl=ev.target.result;window.DATA.user.avatar='';saveData();updateUserUI();renderSettings();showToast('Đã cập nhật avatar!','success')};r.readAsDataURL(f)}
+function toggleAvUrl(){const s=document.getElementById('avUrlSec');s.style.display=s.style.display==='none'?'block':'none'}
+function setAvUrl(){const u=document.getElementById('avUrlIn').value.trim();if(!u||!u.startsWith('http')){showToast('Link không hợp lệ!','error');return}const img=new Image();img.onload=function(){window.DATA.user.avatarUrl=u;window.DATA.user.avatar='';saveData();updateUserUI();renderSettings();showToast('Đã cập nhật!','success')};img.onerror=function(){showToast('Không tải được ảnh!','error')};img.src=u}
+function setAvEmoji(e){window.DATA.user.avatar=e;window.DATA.user.avatarUrl='';saveData();updateUserUI();renderSettings();showToast('Avatar: '+e,'success')}
+function removeAv(){window.DATA.user.avatarUrl='';window.DATA.user.avatar='😊';saveData();updateUserUI();renderSettings();showToast('Đã xóa avatar','info')}
+function setColor(c){window.DATA.settings.accentColor=c;document.documentElement.style.setProperty('--primary',c);saveData();renderSettings();showToast('Đã đổi màu!','success')}
+
+function showNotifications(){document.getElementById('notifBadge').style.display='none';showToast('🔔 Nhớ uống nước, deadline task gần, ghi mood!','info')}
+function handleFAB(){if(APP.currentPage==='finance')openModal('transModal');else openModal('taskModal')}
+function handleSearch(){const q=document.getElementById('globalSearch').value.toLowerCase();if(q.includes('tài chính')||q.includes('tiền'))navigateTo('finance');else if(q.includes('tâm')||q.includes('mood'))navigateTo('mind');else if(q.includes('học'))navigateTo('study');else if(q.includes('sức khỏe')||q.includes('bmi'))navigateTo('health');else if(q.includes('task')||q.includes('năng'))navigateTo('productivity');else if(q.includes('ai')||q.includes('chat'))navigateTo('assistant');else if(q.includes('cài đặt'))navigateTo('settings');else showToast('Thử: tài chính, tinh thần, học tập, sức khỏe, năng suất, AI','info');document.getElementById('globalSearch').value=''}
+function toggleFAQ(el){const it=el.parentElement,was=it.classList.contains('active');document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('active'));if(!was)it.classList.add('active')}
+
+function initParticles(){const cv=document.getElementById('particles-canvas');if(!cv)return;const ctx=cv.getContext('2d');let pts=[];function resize(){cv.width=cv.offsetWidth;cv.height=cv.offsetHeight}function create(){pts=[];const n=Math.min(50,Math.floor(cv.width*cv.height/18000));for(let i=0;i<n;i++)pts.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*3+1,vx:(Math.random()-0.5)*0.5,vy:(Math.random()-0.5)*0.5,o:Math.random()*0.5+0.1,c:['#6C63FF','#00D4AA','#FF6B6B','#FFB84D'][Math.floor(Math.random()*4)]})}function draw(){ctx.clearRect(0,0,cv.width,cv.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>cv.width)p.vx*=-1;if(p.y<0||p.y>cv.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.c;ctx.globalAlpha=p.o;ctx.fill()});ctx.globalAlpha=1;requestAnimationFrame(draw)}resize();create();draw();window.addEventListener('resize',()=>{resize();create()})}
+function initScrollObserver(){const obs=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>{e.target.classList.add('fade-in-up');e.target.style.opacity='1'},i*100);obs.unobserve(e.target)}})},{threshold:0.1});document.querySelectorAll('.observe,.feature-card,.step,.testimonial-card').forEach(el=>{el.style.opacity='0';obs.observe(el)});const so=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){animateCounters();so.unobserve(e.target)}})},{threshold:0.5});const ss=document.querySelector('.stats-section');if(ss)so.observe(ss)}
+
+function animateCounters(){document.querySelectorAll('.stat-number[data-target]').forEach(el=>{const target=parseInt(el.dataset.target),suffix=el.dataset.suffix||'',duration=2000,startTime=Date.now();function update(){const elapsed=Date.now()-startTime,progress=Math.min(elapsed/duration,1),eased=1-Math.pow(1-progress,3),current=Math.floor(target*eased);el.textContent=target>1000?current.toLocaleString()+'+'+suffix:current+suffix;if(progress<1)requestAnimationFrame(update)}update()})}
+
+function initNavScroll(){window.addEventListener('scroll',()=>{const n=document.getElementById('navbar');if(n)n.classList.toggle('scrolled',window.scrollY>50)})}
+
+function initMockupTilt(){const mk=document.getElementById('heroMockup');if(!mk)return;const hero=document.querySelector('.hero');hero.addEventListener('mousemove',e=>{const r=hero.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-0.5,y=(e.clientY-r.top)/r.height-0.5;mk.style.transform='rotateY('+x*15+'deg) rotateX('+(-y*15)+'deg)'});hero.addEventListener('mouseleave',()=>{mk.style.transform='rotateY(0deg) rotateX(0deg)'})}
+
+function initTestimonialScroll(){const track=document.getElementById('testimonialsTrack');if(!track)return;let pos=0,paused=false;track.addEventListener('mouseenter',()=>paused=true);track.addEventListener('mouseleave',()=>paused=false);const cards=track.innerHTML;track.innerHTML=cards+cards;function auto(){if(!paused&&track){pos+=0.5;if(pos>=track.scrollWidth/2)pos=0;track.scrollLeft=pos}requestAnimationFrame(auto)}auto()}
+
+function initTransactionDate(){const d=document.getElementById('transDate');if(d)d.value=getToday();const t=document.getElementById('taskDeadline');if(t)t.value=getToday()}
+
+function init(){
+  initData();
+  loadTheme();
+  initParticles();
+  initNavScroll();
+  initMockupTilt();
+  initTransactionDate();
+  
+  if(localStorage.getItem('lifesync_loggedin')==='true'){
+    enterDashboard();
+  }else{
+    setTimeout(()=>{initScrollObserver();initTestimonialScroll()},300);
+  }
+  
+  document.querySelectorAll('.modal-overlay').forEach(overlay=>{
+    overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('active')});
+  });
+  
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape')document.querySelectorAll('.modal-overlay.active').forEach(m=>m.classList.remove('active'));
+  });
+  
+  console.log('LifeSync AI v1.0.0 loaded!');
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
